@@ -4,8 +4,6 @@ services:
   postgres:
     container_name: postgres_container
     image: postgres:12.13-alpine3.17
-    env_file:
-      - .env.local
     volumes:
     - postgres:/data/postgres
     environment:
@@ -14,14 +12,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       PGDATA: /data/postgres
     ports:
-      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+      - '${POSTGRES_PORT_LOCAL}:${POSTGRES_PORT}'
     restart: always
 
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
-    env_file:
-      - .env.local
     volumes:
       - pgadmin:/root/.pgadmin
     environment:
