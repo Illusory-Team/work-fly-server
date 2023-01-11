@@ -1,9 +1,20 @@
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { TokensModule } from './tokens/tokens.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { AccessTokenGuard } from './common/guards';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env.local'] })
+    ConfigModule.forRoot({ isGlobal: true }),
+    UsersModule,
+    AuthModule,
+    TokensModule,
+    PrismaModule
   ],
+  providers: [{ provide: APP_GUARD, useClass: AccessTokenGuard }],
 })
 export class AppModule {}
