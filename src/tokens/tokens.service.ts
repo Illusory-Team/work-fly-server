@@ -1,16 +1,18 @@
 import { PrismaService } from './../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
-import { Tokens } from './types';
+import { Tokens } from './interfaces';
 import { hash } from 'bcrypt';
 import { Token } from '@prisma/client';
 import { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY } from './tokens.constants';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TokensService {
   constructor(
     private prismaService: PrismaService,
     private jwtService: JwtService,
+    private configService: ConfigService
   ) {}
 
   async saveRefreshToken(userId: number, refreshToken: string): Promise<Token> {
@@ -69,7 +71,7 @@ export class TokensService {
   }
 
   validateRefreshToken(refreshToken: string) {
-    return this.jwtService.verify(refreshToken, {secret: process.env.REFRESH_SECRET_KEY})
+    return this.jwtService.verify(refreshToken, {secret: this.configService.get<string>('REFRESH_SECRET_KEY')})
   }
 
   hashPayload(payload: string): Promise<string> {
