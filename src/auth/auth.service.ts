@@ -3,10 +3,12 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { UsersService } from './../users/users.service';
 import { Injectable } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { UserData } from './types';
+import { UserData } from './interfaces';
 import { PureUserDto } from '../users/dto/pure-user.dto';
-import { HttpException } from '@nestjs/common/exceptions';
-import { HttpStatus } from '@nestjs/common/enums';
+import {
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common/exceptions';
 import { compare } from 'bcrypt';
 
 @Injectable()
@@ -19,7 +21,7 @@ export class AuthService {
   async register(dto: RegisterUserDto): Promise<UserData> {
     const candidate = await this.usersService.findOneByEmail(dto.email);
     if (candidate) {
-      throw new HttpException('User already exists', HttpStatus.FORBIDDEN);
+      throw new ForbiddenException('User already exists');
     }
 
     const hashPassword = await this.tokensService.hashPayload(dto.password);
@@ -36,12 +38,12 @@ export class AuthService {
   async login(dto: LoginUserDto): Promise<UserData> {
     const user = await this.usersService.findOneByEmail(dto.email);
     if (!user) {
-      throw new HttpException('Email was not found', HttpStatus.FORBIDDEN);
+      throw new ForbiddenException('Email was not found');
     }
 
     const isEquals = await compare(dto.password, user.password);
     if (!isEquals) {
-      throw new HttpException('Email or password is incorrect', HttpStatus.FORBIDDEN);
+      throw new ForbiddenException('Email or password is incorrect');
     }
 
     const tokens = await this.tokensService.generateTokens(user.id);
@@ -50,29 +52,29 @@ export class AuthService {
   }
 
   async logout(refreshToken: string): Promise<void> {
-    if(!refreshToken) {
-      throw new HttpException('You are not authorized', HttpStatus.UNAUTHORIZED);
+    if (!refreshToken) {
+      throw new UnauthorizedException();
     }
-    await this.tokensService.nullRefreshToken(refreshToken)
+    await this.tokensService.nullRefreshToken(refreshToken);
   }
 
   async refresh(refreshToken: string): Promise<UserData> {
-    if(!refreshToken) {
-      throw new HttpException('You are not authorized', HttpStatus.UNAUTHORIZED);
+    if (!refreshToken) {
+      throw new UnauthorizedException();
     }
 
-    const userData = this.tokensService.validateRefreshToken(refreshToken)
-    const tokenFromDb = await this.tokensService.findRefreshToken(refreshToken)
+    const userData = this.tokensService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await this.tokensService.findRefreshToken(refreshToken);
 
-    if(!userData || !tokenFromDb) {
-      throw new HttpException('You are not authorized', HttpStatus.UNAUTHORIZED);
+    if (!userData || !tokenFromDb) {
+      throw new UnauthorizedException();
     }
 
-    const user = await this.usersService.findOneById(userData.userId)
-    const tokens = await this.tokensService.generateTokens(user.id)
+    const user = await this.usersService.findOneById(userData.userId);
+    const tokens = await this.tokensService.generateTokens(user.id);
 
-    await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken)
+    await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
 
-    return {user: new PureUserDto(user), tokens}
+    return { user: new PureUserDto(user), tokens };
   }
 }

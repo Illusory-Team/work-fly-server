@@ -1,23 +1,14 @@
 import { RefreshTokenGuard } from './../common/guards/refreshToken.guard';
 import { HttpStatus } from '@nestjs/common/enums';
 import { AuthService } from './auth.service';
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  Req,
-  Res,
-  HttpCode,
-  UseGuards
-} from '@nestjs/common';
+import { Controller, Post, Get, Body, Req, Res, HttpCode, UseGuards } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { UserData } from './types';
+import { UserData } from './interfaces';
 import { Request, Response } from 'express';
 import { Public } from 'src/common/decorators';
 import { REFRESH_TOKEN_TIME, ACCESS_TOKEN_TIME } from 'src/tokens/tokens.constants';
-import { Tokens } from 'src/tokens/types';
+import { Tokens } from 'src/tokens/interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -25,13 +16,10 @@ export class AuthController {
 
   @Public()
   @Post('registration')
-  async register(
-    @Body() dto: RegisterUserDto,
-    @Res() res: Response,
-  ): Promise<Response<UserData>> {
+  async register(@Body() dto: RegisterUserDto, @Res() res: Response): Promise<Response<UserData>> {
     const userData = await this.authService.register(dto);
 
-    this.setCookies(res, userData.tokens)
+    this.setCookies(res, userData.tokens);
 
     return res.json(userData);
   }
@@ -39,13 +27,10 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(
-    @Body() dto: LoginUserDto,
-    @Res() res: Response,
-  ): Promise<Response<UserData>> {
+  async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<Response<UserData>> {
     const userData = await this.authService.login(dto);
 
-    this.setCookies(res, userData.tokens)
+    this.setCookies(res, userData.tokens);
 
     return res.json(userData);
   }
@@ -55,7 +40,7 @@ export class AuthController {
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
 
-    this.clearCookies(res)
+    this.clearCookies(res);
 
     await this.authService.logout(refreshToken);
 
@@ -66,15 +51,12 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
   @HttpCode(HttpStatus.OK)
-  async refresh(
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<Response<UserData>> {
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<UserData>> {
     const { refreshToken } = req.cookies;
 
     const userData = await this.authService.refresh(refreshToken);
 
-    this.setCookies(res, userData.tokens)
+    this.setCookies(res, userData.tokens);
 
     return res.json(userData);
   }

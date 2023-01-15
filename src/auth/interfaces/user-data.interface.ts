@@ -1,4 +1,4 @@
-import { Tokens } from "src/tokens/types"
+import { Tokens } from "src/tokens/interfaces"
 import { PureUserDto } from "../../users/dto/pure-user.dto"
 
 export type UserData = {
