@@ -15,7 +15,7 @@ export class TokensService {
     private configService: ConfigService
   ) {}
 
-  async saveRefreshToken(userId: number, refreshToken: string): Promise<Token> {
+  async saveRefreshToken(userId: string, refreshToken: string): Promise<Token> {
     const tokenData = await this.prismaService.token.findUnique({
       where: { userId },
     });
@@ -41,7 +41,7 @@ export class TokensService {
     });
   }
 
-  async generateTokens(userId: number): Promise<Tokens> {
+  async generateTokens(userId: string): Promise<Tokens> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {

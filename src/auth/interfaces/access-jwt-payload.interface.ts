@@ -1,3 +1,3 @@
 export type AccessJwtPayload = {
-  id: number
+  id: string
 }
