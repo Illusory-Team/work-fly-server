@@ -38,7 +38,7 @@ export class AuthService {
   async login(dto: LoginUserDto): Promise<UserData> {
     const user = await this.usersService.findOneByEmail(dto.email);
     if (!user) {
-      throw new ForbiddenException('Email was not found');
+      throw new ForbiddenException('Email or password is incorrect');
     }
 
     const isEquals = await compare(dto.password, user.password);

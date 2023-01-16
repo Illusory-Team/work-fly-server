@@ -11,7 +11,7 @@ export class UsersService {
     return this.prismaService.user.create({ data: dto });
   }
 
-  async findOneById(id: number): Promise<User> {
+  async findOneById(id: string): Promise<User> {
     return this.prismaService.user.findUnique({ where: { id } });
   }
 
