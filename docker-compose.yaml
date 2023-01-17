@@ -27,6 +27,19 @@ services:
       - '${PGADMIN_PORT}:80'
     restart: always
 
+  nest-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest-api
+    restart: always
+    ports:
+      - '${NEST_PORT_LOCAL}:${NEST_PORT}'
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+      
 volumes:
   postgres:
   pgadmin:
