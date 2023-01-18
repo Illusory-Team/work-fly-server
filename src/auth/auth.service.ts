@@ -1,24 +1,18 @@
+import { UserDataDto } from './dto/user-data.dto';
 import { TokensService } from './../tokens/tokens.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UsersService } from './../users/users.service';
 import { Injectable } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { UserData } from './interfaces';
-import { PureUserDto } from '../users/dto/pure-user.dto';
-import {
-  ForbiddenException,
-  UnauthorizedException,
-} from '@nestjs/common/exceptions';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { compare } from 'bcrypt';
+import { PureUserDto } from 'src/users/dto';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private tokensService: TokensService,
-  ) {}
+  constructor(private usersService: UsersService, private tokensService: TokensService) {}
 
-  async register(dto: RegisterUserDto): Promise<UserData> {
+  async register(dto: RegisterUserDto): Promise<UserDataDto> {
     const candidate = await this.usersService.findOneByEmail(dto.email);
     if (candidate) {
       throw new ForbiddenException('User already exists');
@@ -35,7 +29,7 @@ export class AuthService {
     return { user: new PureUserDto(user), tokens };
   }
 
-  async login(dto: LoginUserDto): Promise<UserData> {
+  async login(dto: LoginUserDto): Promise<UserDataDto> {
     const user = await this.usersService.findOneByEmail(dto.email);
     if (!user) {
       throw new ForbiddenException('Email or password is incorrect');
@@ -58,7 +52,7 @@ export class AuthService {
     await this.tokensService.nullRefreshToken(refreshToken);
   }
 
-  async refresh(refreshToken: string): Promise<UserData> {
+  async refresh(refreshToken: string): Promise<UserDataDto> {
     if (!refreshToken) {
       throw new UnauthorizedException();
     }

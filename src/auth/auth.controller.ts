@@ -1,22 +1,31 @@
 import { RefreshTokenGuard } from './../common/guards/refreshToken.guard';
 import { HttpStatus } from '@nestjs/common/enums';
 import { AuthService } from './auth.service';
-import { Controller, Post, Get, Body, Req, Res, HttpCode, UseGuards } from '@nestjs/common';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
-import { UserData } from './interfaces';
+import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from 'src/common/decorators';
 import { REFRESH_TOKEN_TIME, ACCESS_TOKEN_TIME } from 'src/tokens/tokens.constants';
-import { Tokens } from 'src/tokens/interfaces';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { TokensDto } from 'src/tokens/dto/tokens.dto';
+import { LoginUserDto, RegisterUserDto, UserDataDto } from './dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
   @Post('registration')
-  async register(@Body() dto: RegisterUserDto, @Res() res: Response): Promise<Response<UserData>> {
+  @ApiCreatedResponse({ description: 'The user has been successfully created.', type: UserDataDto })
+  @ApiForbiddenResponse({ description: 'User already exists.' })
+  async register(@Body() dto: RegisterUserDto, @Res() res: Response): Promise<Response<UserDataDto>> {
     const userData = await this.authService.register(dto);
 
     this.setCookies(res, userData.tokens);
@@ -27,7 +36,9 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<Response<UserData>> {
+  @ApiOkResponse({ description: 'The user has been successfully logined.', type: UserDataDto })
+  @ApiForbiddenResponse({ description: 'Email or password is incorrect.' })
+  async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<Response<UserDataDto>> {
     const userData = await this.authService.login(dto);
 
     this.setCookies(res, userData.tokens);
@@ -35,8 +46,10 @@ export class AuthController {
     return res.json(userData);
   }
 
-  @Post('logout')
-  @HttpCode(HttpStatus.OK)
+  @Patch('logout')
+  @ApiBearerAuth('access')
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
 
@@ -50,8 +63,10 @@ export class AuthController {
   @Public()
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
-  @HttpCode(HttpStatus.OK)
-  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<UserData>> {
+  @ApiBearerAuth('refresh')
+  @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: UserDataDto })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized by refresh token' })
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<UserDataDto>> {
     const { refreshToken } = req.cookies;
 
     const userData = await this.authService.refresh(refreshToken);
@@ -61,7 +76,7 @@ export class AuthController {
     return res.json(userData);
   }
 
-  private setCookies(res: Response, tokens: Tokens) {
+  private setCookies(res: Response, tokens: TokensDto) {
     res.cookie('refreshToken', tokens.refreshToken, {
       maxAge: REFRESH_TOKEN_TIME,
       httpOnly: true,

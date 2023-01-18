@@ -1,11 +1,11 @@
 import { PrismaService } from './../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
-import { Tokens } from './interfaces';
 import { hash } from 'bcrypt';
 import { Token } from '@prisma/client';
 import { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY } from './tokens.constants';
 import { ConfigService } from '@nestjs/config';
+import { TokensDto } from './dto';
 
 @Injectable()
 export class TokensService {
@@ -41,7 +41,7 @@ export class TokensService {
     });
   }
 
-  async generateTokens(userId: string): Promise<Tokens> {
+  async generateTokens(userId: string): Promise<TokensDto> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
