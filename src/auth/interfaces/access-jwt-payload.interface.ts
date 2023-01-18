@@ -1,3 +1,3 @@
 export interface AccessJwtPayload {
-  id: string
+  id: string;
 }

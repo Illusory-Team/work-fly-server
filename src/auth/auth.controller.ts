@@ -48,7 +48,7 @@ export class AuthController {
 
   @Patch('logout')
   @ApiBearerAuth('access')
-  @ApiOkResponse()
+  @ApiOkResponse({ description: 'The user has been successfully logout.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
@@ -65,7 +65,7 @@ export class AuthController {
   @Get('refresh')
   @ApiBearerAuth('refresh')
   @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: UserDataDto })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized by refresh token' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized by refresh token.' })
   async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<UserDataDto>> {
     const { refreshToken } = req.cookies;
 
