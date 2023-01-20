@@ -8,13 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AccessTokenGuard } from './common/guards';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    UsersModule,
-    AuthModule,
-    TokensModule,
-    PrismaModule
-  ],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), UsersModule, AuthModule, TokensModule, PrismaModule],
   providers: [{ provide: APP_GUARD, useClass: AccessTokenGuard }],
 })
 export class AppModule {}

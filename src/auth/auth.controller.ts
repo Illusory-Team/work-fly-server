@@ -49,7 +49,7 @@ export class AuthController {
   @Patch('logout')
   @ApiBearerAuth('access')
   @ApiOkResponse({ description: 'The user has been successfully logout.' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
 
