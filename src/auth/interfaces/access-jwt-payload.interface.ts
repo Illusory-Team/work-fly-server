@@ -1,3 +1,3 @@
-export type AccessJwtPayload = {
-  id: string
+export interface AccessJwtPayload {
+  id: string;
 }

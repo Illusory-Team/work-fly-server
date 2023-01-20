@@ -4,7 +4,7 @@ CREATE TABLE "users" (
     "password" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
-    "phone" INTEGER NOT NULL,
+    "phone" DECIMAL(65,30) NOT NULL,
     "birthday" TIMESTAMP(3),
     "address" TEXT,
     "description" TEXT,

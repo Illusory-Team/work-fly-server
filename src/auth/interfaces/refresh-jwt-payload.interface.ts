@@ -1,4 +1,4 @@
 import { AccessJwtPayload } from '.';
-export type RefreshJwtPayload = AccessJwtPayload & {
-  refreshToken: string
+export interface RefreshJwtPayload extends AccessJwtPayload {
+  refreshToken: string;
 }
