@@ -5,6 +5,7 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { DocumentBuilder } from '@nestjs/swagger';
 import { SwaggerModule } from '@nestjs/swagger/dist';
+import * as session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -42,6 +43,18 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors();
+  app.use(
+    session({
+      name: 'WORKFLY_SESSION',
+      secret: process.env.SESSION_SECRET_KEY,
+      resave: false,
+      saveUninitialized: true,
+      cookie: {
+        maxAge: 900000,
+        httpOnly: true
+      }
+    }),
+  );
 
   app.useGlobalPipes(new ValidationPipe());
 

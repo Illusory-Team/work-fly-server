@@ -7,10 +7,21 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { ForbiddenException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { compare } from 'bcrypt';
 import { PureUserDto } from 'src/users/dto';
+import { UserSessionDto } from './dto/user-session.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private usersService: UsersService, private tokensService: TokensService) {}
+
+  async setSession(dto: UserSessionDto) {
+    const candidate = await this.usersService.findOneByEmail(dto.email);
+    if (candidate) {
+      throw new ForbiddenException('User already exists');
+    }
+
+    const hashPassword = await this.tokensService.hashPayload(dto.password);
+    return {...dto, password: hashPassword}
+  }
 
   async register(dto: RegisterUserDto): Promise<UserDataDto> {
     const candidate = await this.usersService.findOneByEmail(dto.email);

@@ -1,7 +1,7 @@
 import { RefreshTokenGuard } from './../common/guards/refreshToken.guard';
 import { HttpStatus } from '@nestjs/common/enums';
 import { AuthService } from './auth.service';
-import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from 'src/common/decorators';
 import { REFRESH_TOKEN_TIME, ACCESS_TOKEN_TIME } from 'src/tokens/tokens.constants';
@@ -15,11 +15,19 @@ import {
 } from '@nestjs/swagger';
 import { TokensDto } from 'src/tokens/dto/tokens.dto';
 import { LoginUserDto, RegisterUserDto, UserDataDto } from './dto';
+import { UserSessionDto } from './dto/user-session.dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Public()
+  @Post('session')
+  async setSession(@Session() session: Record<string, any>, @Body() dto: UserSessionDto) {
+    const userSessionData = await this.authService.setSession(dto)
+    session.userAuth = {...userSessionData}
+  }
 
   @Public()
   @Post('registration')
