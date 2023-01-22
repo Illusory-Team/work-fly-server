@@ -1,7 +1,20 @@
+import { CreateUserDto } from 'src/users/dto';
 import { RefreshTokenGuard } from './../common/guards/refreshToken.guard';
 import { HttpStatus } from '@nestjs/common/enums';
 import { AuthService } from './auth.service';
-import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Body,
+  Req,
+  Res,
+  HttpCode,
+  UseGuards,
+  Session,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from 'src/common/decorators';
 import { REFRESH_TOKEN_TIME, ACCESS_TOKEN_TIME } from 'src/tokens/tokens.constants';
@@ -14,8 +27,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { TokensDto } from 'src/tokens/dto/tokens.dto';
-import { LoginUserDto, RegisterUserDto, UserDataDto } from './dto';
-import { UserSessionDto } from './dto/user-session.dto';
+import { LoginUserDto, RegisterUserOwnerDto, UserDataDto, UserSessionDto } from './dto';
+import { CreateCompanyDto } from 'src/companies/dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -24,17 +37,28 @@ export class AuthController {
 
   @Public()
   @Post('session')
+  @ApiCreatedResponse({ description: 'User data session will have been available for 15 mins.' })
+  @ApiForbiddenResponse({ description: 'User already exists.' })
   async setSession(@Session() session: Record<string, any>, @Body() dto: UserSessionDto) {
-    const userSessionData = await this.authService.setSession(dto)
-    session.userAuth = {...userSessionData}
+    const userSessionData = await this.authService.setSession(dto);
+    session.userAuth = { ...userSessionData };
   }
 
   @Public()
   @Post('registration')
-  @ApiCreatedResponse({ description: 'The user has been successfully created.', type: UserDataDto })
+  @ApiCreatedResponse({ description: 'The user and the company have been successfully created.', type: UserDataDto })
   @ApiForbiddenResponse({ description: 'User already exists.' })
-  async register(@Body() dto: RegisterUserDto, @Res() res: Response): Promise<Response<UserDataDto>> {
-    const userData = await this.authService.register(dto);
+  @ApiForbiddenResponse({ description: 'You don not have user data in the session, register user again.' })
+  async register(
+    @Session() session: Record<string, any>,
+    @Body() dto: CreateCompanyDto,
+    @Res() res: Response,
+  ): Promise<Response<UserDataDto>> {
+    const userRegData: CreateUserDto = session.userAuth;
+
+    const userOwnerDto: RegisterUserOwnerDto = { company: dto, user: userRegData };
+
+    const userData = await this.authService.register(userOwnerDto);
 
     this.setCookies(res, userData.tokens);
 
