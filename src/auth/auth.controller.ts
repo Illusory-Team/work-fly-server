@@ -13,7 +13,6 @@ import {
   HttpCode,
   UseGuards,
   Session,
-  ForbiddenException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from 'src/common/decorators';

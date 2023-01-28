@@ -51,12 +51,16 @@ async function bootstrap() {
       saveUninitialized: true,
       cookie: {
         maxAge: 900000,
-        httpOnly: true
-      }
+        httpOnly: true,
+      },
     }),
   );
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
 
   await app.listen(process.env.SERVER_PORT);
 }

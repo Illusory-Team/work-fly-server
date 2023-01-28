@@ -31,6 +31,9 @@ export class PureUserDto {
   @ApiProperty({ example: 'Working only from 11 a.m. to 7 p.m.' })
   description: string;
 
+  @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
+  companyId: string;
+
   constructor(model: User) {
     this.id = model.id;
     this.email = model.email;
@@ -39,5 +42,6 @@ export class PureUserDto {
     this.birthday = model.birthday;
     this.address = model.address;
     this.description = model.description;
+    this.companyId = model.companyId;
   }
 }
