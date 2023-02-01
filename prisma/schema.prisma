@@ -12,7 +12,7 @@ model User {
   password    String
   email       String    @unique
   fullName    String
-  phone       Decimal   @db.Decimal(16, 0)
+  phone       String
   birthday    DateTime?
   address     String?
   description String?
@@ -38,7 +38,7 @@ model Token {
 model Company {
   id          String   @id @default(uuid())
   name        String
-  phone       Decimal? @db.Decimal(16, 0)
+  phone       String?
   email       String?
   address     String?
   description String?
