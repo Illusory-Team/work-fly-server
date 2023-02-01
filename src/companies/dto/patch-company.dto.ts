@@ -1,25 +1,25 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { PartialType } from '@nestjs/swagger';
 import { CreateCompanyDto } from './create-company.dto';
+import { IsPhoneNumber } from 'src/common/decorators';
 
 export class PatchCompanyDto extends PartialType(CreateCompanyDto) {
-  @IsNumber()
-  @Min(100000)
-  @Max(1000000000000000)
+  @IsString()
+  @IsPhoneNumber()
   @IsOptional()
-  phone?
+  phone?: string;
 
   @IsEmail()
   @IsOptional()
-  email?
-  
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  address?
+  email?: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  description?
+  address?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  description?: string;
 }

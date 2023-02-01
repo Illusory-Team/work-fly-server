@@ -1,7 +1,7 @@
-import { Decimal } from '@prisma/client/runtime';
+import { IsPhoneNumber } from './../../common/decorators';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class PureUserDto {
   @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
@@ -16,11 +16,10 @@ export class PureUserDto {
   @IsNotEmpty()
   fullName: string;
 
-  @ApiProperty({ description: 'Work phone number', example: 89994377832, type: Number })
-  @IsNumber()
-  @Min(100000)
-  @Max(1000000000000000)
-  phone: Decimal;
+  @ApiProperty({ description: 'Work phone number', example: "89994377832", type: Number })
+  @IsString()
+  @IsPhoneNumber()
+  phone: string;
 
   @ApiProperty({ example: '2003-06-20 00:00:00' })
   birthday: Date;
