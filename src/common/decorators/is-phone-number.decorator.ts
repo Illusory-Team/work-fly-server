@@ -10,7 +10,7 @@ import { PHONE_ERROR_MESSAGE } from '../constants';
 @ValidatorConstraint({ name: 'IsPhoneNumber', async: true })
 @Injectable()
 export class IsPhoneNumberConstraint implements ValidatorConstraintInterface {
-  async validate(value: any): Promise<boolean> {
+  async validate(value: string): Promise<boolean> {
     if (!value) {
       return false;
     }
