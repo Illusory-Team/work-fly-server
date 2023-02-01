@@ -2,18 +2,7 @@ import { CreateUserDto } from 'src/users/dto';
 import { RefreshTokenGuard } from './../common/guards/refreshToken.guard';
 import { HttpStatus } from '@nestjs/common/enums';
 import { AuthService } from './auth.service';
-import {
-  Controller,
-  Post,
-  Get,
-  Patch,
-  Body,
-  Req,
-  Res,
-  HttpCode,
-  UseGuards,
-  Session,
-} from '@nestjs/common';
+import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from 'src/common/decorators';
 import { REFRESH_TOKEN_TIME, ACCESS_TOKEN_TIME } from 'src/tokens/tokens.constants';
@@ -28,6 +17,7 @@ import {
 import { TokensDto } from 'src/tokens/dto/tokens.dto';
 import { LoginUserDto, RegisterUserOwnerDto, UserDataDto, UserSessionDto } from './dto';
 import { CreateCompanyDto } from 'src/companies/dto';
+import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from 'src/common/constants';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -37,7 +27,7 @@ export class AuthController {
   @Public()
   @Post('session')
   @ApiCreatedResponse({ description: 'User data session will have been available for 15 mins.' })
-  @ApiForbiddenResponse({ description: 'User already exists.' })
+  @ApiForbiddenResponse({ description: USER_EXISTS })
   async setSession(@Session() session: Record<string, any>, @Body() dto: UserSessionDto) {
     const userSessionData = await this.authService.setSession(dto);
     session.userAuth = { ...userSessionData };
@@ -46,8 +36,8 @@ export class AuthController {
   @Public()
   @Post('registration')
   @ApiCreatedResponse({ description: 'The user and the company have been successfully created.', type: UserDataDto })
-  @ApiForbiddenResponse({ description: 'User already exists.' })
-  @ApiForbiddenResponse({ description: 'You don not have user data in the session, register user again.' })
+  @ApiForbiddenResponse({ description: USER_EXISTS })
+  @ApiForbiddenResponse({ description: NO_SESSION })
   async register(
     @Session() session: Record<string, any>,
     @Body() dto: CreateCompanyDto,
@@ -68,7 +58,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'The user has been successfully logined.', type: UserDataDto })
-  @ApiForbiddenResponse({ description: 'Email or password is incorrect.' })
+  @ApiForbiddenResponse({ description: EMAIL_PASSWORD_INCORRECT })
   async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<Response<UserDataDto>> {
     const userData = await this.authService.login(dto);
 
@@ -80,7 +70,7 @@ export class AuthController {
   @Patch('logout')
   @ApiBearerAuth('access')
   @ApiOkResponse({ description: 'The user has been successfully logout.' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
 

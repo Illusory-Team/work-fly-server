@@ -5,7 +5,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { PHONE_ERROR_MESSAGE } from '../constants';
+import { PHONE_VALIDATION } from '../constants';
 
 @ValidatorConstraint({ name: 'IsPhoneNumber', async: true })
 @Injectable()
@@ -21,7 +21,7 @@ export class IsPhoneNumberConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage() {
-    return PHONE_ERROR_MESSAGE;
+    return PHONE_VALIDATION;
   }
 }
 

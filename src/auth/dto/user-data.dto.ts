@@ -6,6 +6,6 @@ export class UserDataDto {
   @ApiProperty({ description: 'User data without password' })
   user: PureUserDto;
 
-  @ApiProperty({ description: 'User data without password' })
+  @ApiProperty({ description: 'Refresh and Access tokens' })
   tokens: TokensDto;
 }

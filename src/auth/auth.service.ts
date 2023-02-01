@@ -8,6 +8,7 @@ import { ForbiddenException, UnauthorizedException } from '@nestjs/common/except
 import { compare } from 'bcrypt';
 import { PureUserDto } from 'src/users/dto';
 import { RegisterUserOwnerDto, UserSessionDto } from './dto';
+import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, USER_EXISTS } from 'src/common/constants';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
   async setSession(dto: UserSessionDto) {
     const candidate = await this.usersService.findOneByEmail(dto.email);
     if (candidate) {
-      throw new ForbiddenException('User already exists');
+      throw new ForbiddenException(USER_EXISTS);
     }
 
     const hashPassword = await this.tokensService.hashPayload(dto.password);
@@ -29,12 +30,12 @@ export class AuthService {
 
   async register(dto: RegisterUserOwnerDto): Promise<UserDataDto> {
     if (!dto.user) {
-      throw new ForbiddenException('You don not have user data in the session, register user again');
+      throw new ForbiddenException(NO_SESSION);
     }
 
     const candidate = await this.usersService.findOneByEmail(dto.user.email);
     if (candidate) {
-      throw new ForbiddenException('User already exists');
+      throw new ForbiddenException(USER_EXISTS);
     }
 
     const company = await this.companiesService.create(dto.company);
@@ -48,12 +49,12 @@ export class AuthService {
   async login(dto: LoginUserDto): Promise<UserDataDto> {
     const user = await this.usersService.findOneByEmail(dto.email);
     if (!user) {
-      throw new ForbiddenException('Email or password is incorrect');
+      throw new ForbiddenException(EMAIL_PASSWORD_INCORRECT);
     }
 
     const isEquals = await compare(dto.password, user.password);
     if (!isEquals) {
-      throw new ForbiddenException('Email or password is incorrect');
+      throw new ForbiddenException(EMAIL_PASSWORD_INCORRECT);
     }
 
     const tokens = await this.tokensService.generateTokens(user.id);
