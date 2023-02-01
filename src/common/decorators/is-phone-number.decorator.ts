@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import {
   registerDecorator,
-  ValidationArguments,
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+import { PHONE_ERROR_MESSAGE } from '../constants';
 
 @ValidatorConstraint({ name: 'IsPhoneNumber', async: true })
 @Injectable()
 export class IsPhoneNumberConstraint implements ValidatorConstraintInterface {
-  constructor() {}
   async validate(value: any): Promise<boolean> {
     if (!value) {
       return false;
@@ -22,7 +21,7 @@ export class IsPhoneNumberConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage() {
-    return `phone number is not valid to the example: '89997485241' which must contains more than 5 and less than 15 digits, where 1st digit is more than 5`;
+    return PHONE_ERROR_MESSAGE;
   }
 }
 
