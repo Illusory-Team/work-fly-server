@@ -28,7 +28,7 @@ export class AuthController {
   @Post('session')
   @ApiCreatedResponse({ description: 'User data session will have been available for 15 mins.' })
   @ApiForbiddenResponse({ description: USER_EXISTS })
-  async setSession(@Session() session: Record<string, any>, @Body() dto: UserSessionDto) {
+  async setSession(@Session() session: Record<string, any>, @Body() dto: UserSessionDto): Promise<void> {
     const userSessionData = await this.authService.setSession(dto);
     session.userAuth = { ...userSessionData };
   }

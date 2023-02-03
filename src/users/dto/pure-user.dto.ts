@@ -16,7 +16,7 @@ export class PureUserDto {
   @IsNotEmpty()
   fullName: string;
 
-  @ApiProperty({ description: 'Work phone number', example: "89994377832", type: Number })
+  @ApiProperty({ description: 'Work phone number', example: "89994377832" })
   @IsString()
   @IsPhoneNumber()
   phone: string;
