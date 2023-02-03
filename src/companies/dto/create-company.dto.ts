@@ -1,9 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { CompanyDataDto } from './company-data.dto';
+import { PickType } from '@nestjs/swagger';
 
-export class CreateCompanyDto {
-  @ApiProperty({ example: 'google', required: true})
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-}
+export class CreateCompanyDto extends PickType(CompanyDataDto, ['name'] as const) {}
