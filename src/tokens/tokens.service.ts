@@ -74,6 +74,10 @@ export class TokensService {
     return this.jwtService.verify(refreshToken, {secret: this.configService.get<string>('REFRESH_SECRET_KEY')})
   }
 
+  validateAccessToken(accessToken: string) {
+    return this.jwtService.verify(accessToken, {secret: this.configService.get<string>('ACCESS_SECRET_KEY')})
+  }
+
   hashPayload(payload: string): Promise<string> {
     return hash(payload, 7);
   }

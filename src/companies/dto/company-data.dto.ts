@@ -19,7 +19,7 @@ export class CompanyDataDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ description: 'Office address', example: 'Brandon St 82, London,' })
+  @ApiProperty({ description: 'Office address', example: 'Brandon St 82, London' })
   @IsString()
   @IsNotEmpty()
   address: string;

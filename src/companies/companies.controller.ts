@@ -9,9 +9,8 @@ import {
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
-  refs,
 } from '@nestjs/swagger';
-import { NOT_FOUND, UNAUTHORIZED, VALIDATION } from 'src/common/constants';
+import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, VALIDATION } from 'src/common/constants';
 
 @ApiTags('companies')
 @Controller('companies')
@@ -32,9 +31,9 @@ export class CompaniesController {
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiBadRequestResponse({ description: VALIDATION })
-  @ApiNotFoundResponse({ schema: { anyOf: [{ description: NOT_FOUND }, { description: 'Nothing was passed' }] } })
+  @ApiNotFoundResponse({ schema: { anyOf: [{ description: NOT_FOUND }, { description: NOTHING_PASSED }] } })
   patchOne(@Req() req: Request, @Param('id') id: string, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
-    const { refreshToken } = req.cookies;
-    return this.companiesService.patchOne(refreshToken, id, dto);
+    const { accessToken } = req.cookies;
+    return this.companiesService.patchOne(accessToken, id, dto);
   }
 }

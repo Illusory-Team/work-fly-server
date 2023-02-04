@@ -19,7 +19,7 @@ export class AuthService {
   ) {}
 
   async setSession(dto: UserSessionDto) {
-    const candidate = await this.usersService.findOneByEmail(dto.email);
+    const candidate = await this.usersService.findByEmail(dto.email);
     if (candidate) {
       throw new ForbiddenException(USER_EXISTS);
     }
@@ -33,7 +33,7 @@ export class AuthService {
       throw new ForbiddenException(NO_SESSION);
     }
 
-    const candidate = await this.usersService.findOneByEmail(dto.user.email);
+    const candidate = await this.usersService.findByEmail(dto.user.email);
     if (candidate) {
       throw new ForbiddenException(USER_EXISTS);
     }
@@ -47,7 +47,7 @@ export class AuthService {
   }
 
   async login(dto: LoginUserDto): Promise<UserDataDto> {
-    const user = await this.usersService.findOneByEmail(dto.email);
+    const user = await this.usersService.findByEmail(dto.email);
     if (!user) {
       throw new ForbiddenException(EMAIL_PASSWORD_INCORRECT);
     }
@@ -81,11 +81,11 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const user = await this.usersService.findOneById(userData.userId);
+    const user = await this.usersService.findById(userData.userId);
     const tokens = await this.tokensService.generateTokens(user.id);
 
     await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
 
-    return { user: new PureUserDto(user), tokens };
+    return { user: user, tokens };
   }
 }

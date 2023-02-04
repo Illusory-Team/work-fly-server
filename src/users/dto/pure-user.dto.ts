@@ -1,7 +1,7 @@
 import { IsPhoneNumber } from './../../common/decorators';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsDateString, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class PureUserDto {
   @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
@@ -16,18 +16,23 @@ export class PureUserDto {
   @IsNotEmpty()
   fullName: string;
 
-  @ApiProperty({ description: 'Work phone number', example: "89994377832" })
+  @ApiProperty({ description: 'Work phone number', example: '89994377832' })
   @IsString()
   @IsPhoneNumber()
   phone: string;
 
   @ApiProperty({ example: '2003-06-20 00:00:00' })
+  @IsDateString({ strict: true })
   birthday: Date;
 
-  @ApiProperty({ description: 'Office address', example: 'Brandon St 82, London,' })
+  @ApiProperty({ description: 'Office address', example: 'Brandon St 82, London' })
+  @IsString()
+  @IsNotEmpty()
   address: string;
 
   @ApiProperty({ example: 'Working only from 11 a.m. to 7 p.m.' })
+  @IsString()
+  @IsNotEmpty()
   description: string;
 
   @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
