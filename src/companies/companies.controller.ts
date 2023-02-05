@@ -30,8 +30,8 @@ export class CompaniesController {
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
-  @ApiBadRequestResponse({ description: VALIDATION })
-  @ApiNotFoundResponse({ schema: { anyOf: [{ description: NOT_FOUND }, { description: NOTHING_PASSED }] } })
+  @ApiBadRequestResponse({ schema: { anyOf: [{ description: VALIDATION }, { description: NOTHING_PASSED }] } })
+  @ApiNotFoundResponse({ description: NOT_FOUND })
   patchOne(@Req() req: Request, @Param('id') id: string, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
     const { accessToken } = req.cookies;
     return this.companiesService.patchOne(accessToken, id, dto);
