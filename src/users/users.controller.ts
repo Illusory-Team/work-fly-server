@@ -1,6 +1,6 @@
 import { UsersService } from './users.service';
 import { Controller, Get, Param, Patch, Body, Req } from '@nestjs/common';
-import { PatchUserDto, PureUserDto } from './dto';
+import { FindUserDto, PatchUserDto, PureUserDto } from './dto';
 import { Request } from 'express';
 import {
   ApiBadRequestResponse,
@@ -12,7 +12,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, USER_EXISTS, VALIDATION } from 'src/common/constants';
-import { FindUserDto } from './dto/find-user.dto';
 
 @ApiTags('users')
 @Controller('users')

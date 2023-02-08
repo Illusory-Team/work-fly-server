@@ -3,9 +3,8 @@ import { TokensService } from './../tokens/tokens.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BadRequestException, Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { CreateUserDto, PatchUserDto, PureUserDto } from './dto';
+import { CreateUserDto, FindUserDto, PatchUserDto, PureUserDto } from './dto';
 import { NOTHING_PASSED, NOT_FOUND, USER_EXISTS } from 'src/common/constants';
-import { FindUserDto } from './dto/find-user.dto';
 
 @Injectable()
 export class UsersService {
