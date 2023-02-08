@@ -19,6 +19,8 @@ model User {
   token       Token?
   company     Company   @relation(fields: [companyId], references: [id])
   companyId   String
+  position    Position  @relation(fields: [positionId], references: [id])
+  positionId  String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -43,8 +45,21 @@ model Company {
   address     String?
   description String?
   users       User[]
+  positions   Position[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("companies")
+}
+
+model Position {
+  id    String @id @default(uuid())
+  value String
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+  users     User[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("positions")
 }

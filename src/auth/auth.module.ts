@@ -1,3 +1,4 @@
+import { PositionsModule } from './../positions/positions.module';
 import { CompaniesModule } from './../companies/companies.module';
 import { TokensModule } from './../tokens/tokens.module';
 import { UsersModule } from './../users/users.module';
@@ -10,6 +11,6 @@ import { AccessTokenStrategy, RefreshTokenStrategy } from './strategies';
   providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
   controllers: [AuthController],
   exports: [AccessTokenStrategy, RefreshTokenStrategy],
-  imports: [UsersModule, TokensModule, CompaniesModule],
+  imports: [UsersModule, TokensModule, CompaniesModule, PositionsModule],
 })
 export class AuthModule {}

@@ -38,6 +38,7 @@ export class PureUserDto {
   @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
   companyId: string;
 
+
   constructor(model: User) {
     this.id = model.id;
     this.email = model.email;

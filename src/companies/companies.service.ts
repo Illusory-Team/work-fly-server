@@ -1,19 +1,18 @@
 import { TokensService } from './../tokens/tokens.service';
-import { CreateCompanyDto, PatchCompanyDto } from 'src/companies/dto';
+import { CompanyDataDto, CreateCompanyDto, PatchCompanyDto } from 'src/companies/dto';
 import { PrismaService } from './../prisma/prisma.service';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Company } from '@prisma/client';
 import { NOTHING_PASSED, NOT_FOUND } from 'src/common/constants';
 
 @Injectable()
 export class CompaniesService {
   constructor(private prismaService: PrismaService, private tokensService: TokensService) {}
 
-  async create(dto: CreateCompanyDto): Promise<Company> {
+  async create(dto: CreateCompanyDto): Promise<CompanyDataDto> {
     return this.prismaService.company.create({ data: dto });
   }
 
-  async findById(id: string): Promise<Company> {
+  async findById(id: string): Promise<CompanyDataDto> {
     const company = await this.prismaService.company.findUnique({ where: { id } });
     if (!company) {
       throw new NotFoundException(NOT_FOUND);
@@ -22,7 +21,7 @@ export class CompaniesService {
     return this.prismaService.company.findUnique({ where: { id } });
   }
 
-  async patchOne(accessToken: string, id: string, dto: PatchCompanyDto): Promise<Company> {
+  async patchOne(accessToken: string, id: string, dto: PatchCompanyDto): Promise<CompanyDataDto> {
     if (Object.keys(dto).length < 1) {
       throw new BadRequestException(NOTHING_PASSED);
     }

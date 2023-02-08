@@ -1,3 +1,4 @@
+import { PositionsModule } from './../positions/positions.module';
 import { TokensModule } from './../tokens/tokens.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { Module } from '@nestjs/common';
@@ -7,7 +8,7 @@ import { UsersController } from './users.controller';
 @Module({
   providers: [UsersService],
   exports: [UsersService],
-  imports: [PrismaModule, TokensModule],
+  imports: [PrismaModule, TokensModule, PositionsModule],
   controllers: [UsersController]
 })
 export class UsersModule {}

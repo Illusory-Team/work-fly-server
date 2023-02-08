@@ -12,6 +12,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, USER_EXISTS, VALIDATION } from 'src/common/constants';
+import { FindUserDto } from './dto/find-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -23,8 +24,8 @@ export class UsersController {
   @ApiOkResponse({ type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  findById(@Param('id') id: string): Promise<PureUserDto> {
-    return this.usersService.findById(id);
+  findById(@Param('id') id: string): Promise<FindUserDto> {
+    return this.usersService.findWithPosition(id);
   }
 
   @Patch(':id')
