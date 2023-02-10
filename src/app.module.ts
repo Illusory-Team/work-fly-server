@@ -8,9 +8,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AccessTokenGuard } from './common/guards';
 import { CompaniesModule } from './companies/companies.module';
 import { IsPhoneNumberConstraint } from './common/decorators'
+import { PositionsModule } from './positions/positions.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), UsersModule, AuthModule, TokensModule, PrismaModule, CompaniesModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), UsersModule, AuthModule, TokensModule, PrismaModule, CompaniesModule, PositionsModule],
   providers: [{ provide: APP_GUARD, useClass: AccessTokenGuard }, IsPhoneNumberConstraint],
 })
 export class AppModule {}

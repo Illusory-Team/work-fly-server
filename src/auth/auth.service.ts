@@ -1,3 +1,4 @@
+import { PositionsService } from './../positions/positions.service';
 import { CompaniesService } from './../companies/companies.service';
 import { UserDataDto } from './dto/user-data.dto';
 import { TokensService } from './../tokens/tokens.service';
@@ -16,6 +17,7 @@ export class AuthService {
     private usersService: UsersService,
     private tokensService: TokensService,
     private companiesService: CompaniesService,
+    private positionsService: PositionsService,
   ) {}
 
   async setSession(dto: UserSessionDto) {
@@ -39,11 +41,12 @@ export class AuthService {
     }
 
     const company = await this.companiesService.create(dto.company);
-    const user = await this.usersService.create({ ...dto.user, companyId: company.id });
+    const position = await this.positionsService.create(company.id, 'Owner');
+    const user = await this.usersService.create({ ...dto.user, companyId: company.id, positionId: position.id });
 
     const tokens = await this.tokensService.generateTokens(user.id);
     await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
-    return { user: new PureUserDto(user), tokens };
+    return { user: new PureUserDto(user), tokens, position };
   }
 
   async login(dto: LoginUserDto): Promise<UserDataDto> {
@@ -57,9 +60,10 @@ export class AuthService {
       throw new ForbiddenException(EMAIL_PASSWORD_INCORRECT);
     }
 
+    const position = await this.positionsService.findById(user.positionId);
     const tokens = await this.tokensService.generateTokens(user.id);
     await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
-    return { user: new PureUserDto(user), tokens };
+    return { user: new PureUserDto(user), tokens, position };
   }
 
   async logout(refreshToken: string): Promise<void> {
@@ -82,10 +86,11 @@ export class AuthService {
     }
 
     const user = await this.usersService.findById(userData.userId);
+    const position = await this.positionsService.findById(user.positionId);
     const tokens = await this.tokensService.generateTokens(user.id);
 
     await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
 
-    return { user: user, tokens };
+    return { user: new PureUserDto(user), tokens, position };
   }
 }

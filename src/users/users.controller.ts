@@ -1,6 +1,6 @@
 import { UsersService } from './users.service';
 import { Controller, Get, Param, Patch, Body, Req } from '@nestjs/common';
-import { PatchUserDto, PureUserDto } from './dto';
+import { FindUserDto, PatchUserDto, PureUserDto } from './dto';
 import { Request } from 'express';
 import {
   ApiBadRequestResponse,
@@ -23,8 +23,8 @@ export class UsersController {
   @ApiOkResponse({ type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  findById(@Param('id') id: string): Promise<PureUserDto> {
-    return this.usersService.findById(id);
+  findById(@Param('id') id: string): Promise<FindUserDto> {
+    return this.usersService.findWithPosition(id);
   }
 
   @Patch(':id')
