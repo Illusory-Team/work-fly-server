@@ -1,5 +1,5 @@
-import { APP_GUARD, APP_PIPE } from '@nestjs/core';
-import { Module, ValidationPipe } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';

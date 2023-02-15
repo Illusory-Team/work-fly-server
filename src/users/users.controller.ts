@@ -72,7 +72,7 @@ export class UsersController {
       }),
     )
     file: Express.Multer.File,
-  ) {
+  ): Promise<PureUserDto> {
     const { accessToken } = req.cookies;
     return this.usersService.saveAvatar(accessToken, file);
   }
@@ -82,7 +82,7 @@ export class UsersController {
   @ApiOkResponse({ description: 'Removes avatar file.', type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  removeAvatar(@Req() req: Request) {
+  removeAvatar(@Req() req: Request): Promise<PureUserDto> {
     const { accessToken } = req.cookies;
     return this.usersService.removeAvatar(accessToken);
   }

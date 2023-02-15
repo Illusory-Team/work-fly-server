@@ -17,8 +17,7 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto): Promise<User> {
-    const user = await this.prismaService.user.create({ data: dto });
-    return user;
+    return this.prismaService.user.create({ data: dto });
   }
 
   async findById(id: string): Promise<User> {
@@ -76,7 +75,7 @@ export class UsersService {
     return new PureUserDto(updatedUser);
   }
 
-  async removeAvatar(accessToken: string) {
+  async removeAvatar(accessToken: string): Promise<PureUserDto> {
     const { userId } = this.tokensService.validateAccessToken(accessToken);
     const user = await this.prismaService.user.findUnique({ where: { id: userId } });
 
