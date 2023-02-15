@@ -1,3 +1,4 @@
+import { FilesService } from './../files/files.service';
 import { PositionsService } from './../positions/positions.service';
 import { TokensService } from './../tokens/tokens.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -12,10 +13,12 @@ export class UsersService {
     private prismaService: PrismaService,
     private tokensService: TokensService,
     private positionsService: PositionsService,
+    private filesService: FilesService,
   ) {}
 
   async create(dto: CreateUserDto): Promise<User> {
-    return this.prismaService.user.create({ data: dto });
+    const user = await this.prismaService.user.create({ data: dto });
+    return user;
   }
 
   async findById(id: string): Promise<User> {
@@ -60,6 +63,30 @@ export class UsersService {
     }
 
     const updatedUser = await this.prismaService.user.update({ where: { id }, data: { ...dto } });
+    return new PureUserDto(updatedUser);
+  }
+
+  async saveAvatar(accessToken: string, file: Express.Multer.File): Promise<PureUserDto> {
+    const { userId } = this.tokensService.validateAccessToken(accessToken);
+    const user = await this.prismaService.user.findUnique({ where: { id: userId } });
+
+    const fileName = await this.filesService.saveAvatar(userId, file, user.avatar);
+
+    const updatedUser = await this.prismaService.user.update({ where: { id: userId }, data: { avatar: fileName } });
+    return new PureUserDto(updatedUser);
+  }
+
+  async removeAvatar(accessToken: string) {
+    const { userId } = this.tokensService.validateAccessToken(accessToken);
+    const user = await this.prismaService.user.findUnique({ where: { id: userId } });
+
+    if (!user.avatar) {
+      throw new NotFoundException(NOT_FOUND);
+    }
+
+    await this.filesService.removeAvatar(userId, user.avatar);
+
+    const updatedUser = await this.prismaService.user.update({ where: { id: userId }, data: { avatar: null } });
     return new PureUserDto(updatedUser);
   }
 }

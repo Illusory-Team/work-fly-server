@@ -1,11 +1,10 @@
 import 'reflect-metadata';
-import { ValidationPipe } from '@nestjs/common/pipes';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { DocumentBuilder } from '@nestjs/swagger';
-import { SwaggerModule } from '@nestjs/swagger/dist';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as session from 'express-session';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

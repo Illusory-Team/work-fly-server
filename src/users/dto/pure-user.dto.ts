@@ -35,6 +35,11 @@ export class PureUserDto {
   @IsNotEmpty()
   description: string;
 
+  @ApiProperty({ description: 'file name', example: '1efe537f-e380-4168-959b-f864f2196369.jpg' })
+  @IsString()
+  @IsNotEmpty()
+  avatar: string;
+
   @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
   companyId: string;
 
@@ -47,5 +52,6 @@ export class PureUserDto {
     this.address = model.address;
     this.description = model.description;
     this.companyId = model.companyId;
+    this.avatar = model.avatar;
   }
 }
