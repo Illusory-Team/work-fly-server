@@ -7,3 +7,5 @@ export * from './notFound.constant';
 export * from './validation.constant';
 export * from './nothingPassed.constant';
 export { POSITION } from './position.constant';
+export { IMAGE_VALIDATION } from './imageValidation.constact';
+export { ONE_MB } from './oneMb.constant';
