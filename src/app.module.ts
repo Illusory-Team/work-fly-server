@@ -1,3 +1,4 @@
+import { FolderAppearancesModule } from './folders/appearance/folder-appearances.module';
 import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -12,6 +13,8 @@ import { PositionsModule } from './positions/positions.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { FilesModule } from './files/files.module';
+import { FoldersModule } from './folders/folders.module';
+import { ColorsModule } from './colors/colors.module';
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { FilesModule } from './files/files.module';
     CompaniesModule,
     PositionsModule,
     FilesModule,
+    FoldersModule,
+    FolderAppearancesModule,
+    ColorsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: AccessTokenGuard }, IsPhoneNumberConstraint],
 })
