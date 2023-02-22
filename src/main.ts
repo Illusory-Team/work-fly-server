@@ -41,7 +41,11 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.use(cookieParser());
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    methods: 'GET,PATCH,PUT,POST,DELETE',
+    credentials: true,
+  });
   app.use(
     session({
       name: 'WORKFLY_SESSION',
