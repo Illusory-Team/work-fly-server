@@ -1,5 +1,6 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsNotEmpty, IsNotEmptyObject, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDefined, IsNotEmpty, IsNotEmptyObject, IsObject, IsString, ValidateNested } from 'class-validator';
 import { FolderAppearanceDataDto } from '../appearance/dto';
 import { UserFolderDto } from './user-folder.dto';
 import { UsersCountDto } from './users-count.dto';
@@ -16,7 +17,11 @@ export class FolderDataDto extends PickType(UsersCountDto, ['_count'] as const) 
   //tasks   //in progress
 
   @ApiProperty({ example: FolderAppearanceDataDto })
+  @IsDefined()
+  @IsObject()
   @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => FolderAppearanceDataDto)
   folderAppearance: FolderAppearanceDataDto;
 
   @ApiProperty({ example: 'default' })
