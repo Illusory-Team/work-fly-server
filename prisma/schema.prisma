@@ -8,22 +8,24 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  password    String
-  email       String    @unique
-  fullName    String
-  phone       String
-  birthday    DateTime?
-  address     String?
-  description String?
-  avatar      String?
-  token       Token?
-  company     Company   @relation(fields: [companyId], references: [id])
-  companyId   String
-  position    Position  @relation(fields: [positionId], references: [id])
-  positionId  String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String           @id @default(uuid())
+  password     String
+  email        String           @unique
+  fullName     String
+  phone        String
+  birthday     DateTime?
+  address      String?
+  description  String?
+  avatar       String?
+  token        Token?
+  company      Company          @relation(fields: [companyId], references: [id])
+  companyId    String
+  position     Position         @relation(fields: [positionId], references: [id])
+  positionId   String
+  foldersOwner Folder[]
+  folders      FoldersOnUsers[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   @@map("users")
 }
@@ -39,7 +41,7 @@ model Token {
 }
 
 model Company {
-  id          String     @id @default(uuid())
+  id          String              @id @default(uuid())
   name        String
   phone       String?
   email       String?
@@ -47,10 +49,83 @@ model Company {
   description String?
   users       User[]
   positions   Position[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  folders     Folder[]
+  colors      ColorsOnCompanies[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 
   @@map("companies")
+}
+
+model FoldersOnUsers {
+  folder   Folder @relation(fields: [folderId], references: [id])
+  folderId String
+  users    User   @relation(fields: [usersId], references: [id])
+  usersId  String
+
+  @@id([folderId, usersId])
+  @@map("foldersOnUsers")
+}
+
+model Color {
+  id               String              @id @default(uuid())
+  color            String              @unique
+  companies        ColorsOnCompanies[]
+  folderAppearance FolderAppearance[]
+
+  @@map("colors")
+}
+
+model ColorsOnCompanies {
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+  color     Color   @relation(fields: [colorId], references: [id])
+  colorId   String
+
+  @@id([companyId, colorId])
+  @@map("colorsOnCompanies")
+}
+
+model FolderIcon {
+  id               String             @id @default(uuid())
+  icon             String             @unique
+  folderAppearance FolderAppearance[]
+
+  @@map("folderIcons")
+}
+
+model FolderAppearance {
+  folder  Folder     @relation(fields: [id], references: [id])
+  id      String     @id
+  icon    FolderIcon @relation(fields: [iconId], references: [id])
+  iconId  String
+  color   Color      @relation(fields: [colorId], references: [id])
+  colorId String
+
+  @@map("folderAppearances")
+}
+
+model FolderType {
+  id      String   @id @default(uuid())
+  type    String   @unique
+  folders Folder[]
+
+  @@map("folderTypes")
+}
+
+model Folder {
+  id               String            @id @default(uuid())
+  name             String
+  folderAppearance FolderAppearance?
+  folderType       FolderType        @relation(fields: [folderTypeId], references: [id])
+  folderTypeId     String
+  owner            User              @relation(fields: [ownerId], references: [id])
+  ownerId          String
+  users            FoldersOnUsers[]
+  company          Company           @relation(fields: [companyId], references: [id])
+  companyId        String
+
+  @@map("folders")
 }
 
 model Position {
