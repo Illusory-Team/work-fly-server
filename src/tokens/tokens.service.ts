@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { hash } from 'bcrypt';
 import { Token, CSRFToken } from '@prisma/client';
-import { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY } from './tokens.constants';
 import { ConfigService } from '@nestjs/config';
 import { TokensDto } from './dto';
 import { Request } from 'express';
@@ -26,8 +25,8 @@ export class TokensService {
   validateCSRFToken(csrfToken: string) {
     try {
       // throws error when it's invalid or expired
-      return this.jwtService.verify(csrfToken, { secret: this.configService.get('CSRF_SECRET_KEY') }); 
-    } catch (e) {
+      return this.jwtService.verify(csrfToken, { secret: this.configService.get('CSRF_SECRET_KEY') });
+    } catch {
       throw new ForbiddenException();
     }
   }
@@ -55,13 +54,9 @@ export class TokensService {
   }
 
   async nullCSRFToken(csrfToken: string): Promise<CSRFToken> {
-    const tokenData = await this.prismaService.cSRFToken.findUnique({
-      where: { csrfToken },
-    });
-
     return this.prismaService.cSRFToken.update({
-      where: { csrfToken: tokenData.csrfToken },
-      data: { ...tokenData, csrfToken: null },
+      where: { csrfToken },
+      data: { csrfToken: null },
     });
   }
 
@@ -85,13 +80,9 @@ export class TokensService {
   }
 
   async nullRefreshToken(refreshToken: string): Promise<Token> {
-    const tokenData = await this.prismaService.token.findUnique({
-      where: { refreshToken },
-    });
-
     return this.prismaService.token.update({
-      where: { refreshToken: tokenData.refreshToken },
-      data: { ...tokenData, refreshToken: null },
+      where: { refreshToken },
+      data: { refreshToken: null },
     });
   }
 
@@ -102,7 +93,7 @@ export class TokensService {
           userId,
         },
         {
-          secret: ACCESS_SECRET_KEY,
+          secret: this.configService.get('ACCESS_SECRET_KEY'),
           expiresIn: '15m',
         },
       ),
@@ -111,7 +102,7 @@ export class TokensService {
           userId,
         },
         {
-          secret: REFRESH_SECRET_KEY,
+          secret: this.configService.get('REFRESH_SECRET_KEY'),
           expiresIn: '7d',
         },
       ),
