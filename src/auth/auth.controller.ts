@@ -1,3 +1,4 @@
+import { TokensService } from './../tokens/tokens.service';
 import { CreateUserDto } from 'src/users/dto';
 import { RefreshTokenGuard } from './../common/guards/refreshToken.guard';
 import { HttpStatus } from '@nestjs/common/enums';
@@ -22,7 +23,7 @@ import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private tokensService: TokensService) {}
 
   @Public()
   @Post('session')
@@ -73,10 +74,11 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
+    const csrfToken = this.tokensService.getCsrfTokenFromRequest(req);
 
     this.clearCookies(res);
 
-    await this.authService.logout(refreshToken);
+    await this.authService.logout(refreshToken, csrfToken);
 
     return res.end();
   }
@@ -89,8 +91,9 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized by refresh token.' })
   async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<UserDataDto>> {
     const { refreshToken } = req.cookies;
+    const csrfToken = this.tokensService.getCsrfTokenFromRequest(req);
 
-    const userData = await this.authService.refresh(refreshToken);
+    const userData = await this.authService.refresh(refreshToken, csrfToken);
 
     this.setCookies(res, userData.tokens);
 
