@@ -12,5 +12,5 @@ export class UserDataDto {
   tokens: TokensDto;
 
   @ApiProperty({ description: POSITION })
-  position: PositionDataDto
+  position: PositionDataDto;
 }

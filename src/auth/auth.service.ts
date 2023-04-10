@@ -44,9 +44,11 @@ export class AuthService {
     const position = await this.positionsService.create(company.id, 'Owner');
     const user = await this.usersService.create({ ...dto.user, companyId: company.id, positionId: position.id });
 
+    const csrfToken = await this.tokensService.generateCSRFToken(user.id);
+    await this.tokensService.saveCSRFToken(user.id, csrfToken);
     const tokens = await this.tokensService.generateTokens(user.id);
     await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
-    return { user: new PureUserDto(user), tokens, position };
+    return { user: new PureUserDto(user), tokens: { ...tokens, csrfToken }, position };
   }
 
   async login(dto: LoginUserDto): Promise<UserDataDto> {
@@ -61,36 +63,44 @@ export class AuthService {
     }
 
     const position = await this.positionsService.findById(user.positionId);
+
+    const csrfToken = await this.tokensService.generateCSRFToken(user.id);
+    await this.tokensService.saveCSRFToken(user.id, csrfToken);
     const tokens = await this.tokensService.generateTokens(user.id);
     await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
-    return { user: new PureUserDto(user), tokens, position };
+    return { user: new PureUserDto(user), tokens: { ...tokens, csrfToken }, position };
   }
 
-  async logout(refreshToken: string): Promise<void> {
-    if (!refreshToken) {
+  async logout(refreshToken: string, csrfToken: string): Promise<void> {
+    if (!refreshToken || !csrfToken) {
       throw new UnauthorizedException();
     }
     await this.tokensService.nullRefreshToken(refreshToken);
+    await this.tokensService.nullCSRFToken(csrfToken);
   }
 
-  async refresh(refreshToken: string): Promise<UserDataDto> {
-    if (!refreshToken) {
+  async refresh(refreshToken: string, csrfToken: string): Promise<UserDataDto> {
+    if (!refreshToken || !csrfToken) {
       throw new UnauthorizedException();
     }
 
-    const userData = this.tokensService.validateRefreshToken(refreshToken);
-    const tokenFromDb = await this.tokensService.findRefreshToken(refreshToken);
+    const userRefreshData = this.tokensService.validateRefreshToken(refreshToken);
+    const refreshTokenFromDb = await this.tokensService.findRefreshToken(refreshToken);
+    const userCSRFData = this.tokensService.validateCSRFToken(csrfToken);
+    const csrfTokenFromDb = await this.tokensService.findCSRFToken(csrfToken);
 
-    if (!userData || !tokenFromDb) {
+    if (!userRefreshData || !refreshTokenFromDb || !userCSRFData || !csrfTokenFromDb) {
       throw new UnauthorizedException();
     }
 
-    const user = await this.usersService.findById(userData.userId);
+    const user = await this.usersService.findById(userRefreshData.userId);
     const position = await this.positionsService.findById(user.positionId);
-    const tokens = await this.tokensService.generateTokens(user.id);
 
+    const newCSRFToken = await this.tokensService.generateCSRFToken(user.id);
+    await this.tokensService.saveCSRFToken(user.id, newCSRFToken);
+    const tokens = await this.tokensService.generateTokens(user.id);
     await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
 
-    return { user: new PureUserDto(user), tokens, position };
+    return { user: new PureUserDto(user), tokens: { ...tokens, csrfToken: newCSRFToken }, position };
   }
 }
