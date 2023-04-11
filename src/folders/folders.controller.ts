@@ -10,6 +10,7 @@ import {
   ApiOkResponse,
   ApiBadRequestResponse,
   ApiForbiddenResponse,
+  ApiSecurity,
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, UNAUTHORIZED } from '@constants/error';
 
@@ -19,6 +20,7 @@ export class FoldersController {
   constructor(private foldersService: FoldersService) {}
 
   @Post()
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiCreatedResponse({ type: FolderDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -28,6 +30,7 @@ export class FoldersController {
   }
 
   @Get()
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderDataDto, isArray: true })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -37,6 +40,7 @@ export class FoldersController {
   }
 
   @Patch(':id')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderDataDto })
   @ApiBadRequestResponse({ description: NOTHING_PASSED })

@@ -10,6 +10,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiSecurity,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -20,6 +21,7 @@ export class FolderAppearancesController {
   constructor(private folderAppearancesService: FolderAppearancesService) {}
 
   @Patch(':id')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderAppearanceDataDto })
   @ApiBadRequestResponse({ description: NOTHING_PASSED })

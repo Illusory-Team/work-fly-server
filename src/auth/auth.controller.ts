@@ -11,6 +11,7 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOkResponse,
+  ApiSecurity,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -72,7 +73,8 @@ export class AuthController {
   }
 
   @Patch('logout')
-  @ApiBearerAuth('access')
+  @ApiSecurity('csrf')
+  @ApiBearerAuth('refresh')
   @ApiOkResponse({ description: 'The user has been successfully logout.' })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
@@ -89,6 +91,7 @@ export class AuthController {
   @Public()
   @UseGuards(csrfAndRefreshTokenGuard)
   @Get('refresh')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('refresh')
   @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: AuthResponseDto })
   @ApiUnauthorizedResponse({ description: 'Unauthorized by refresh token.' })

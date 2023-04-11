@@ -24,6 +24,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiSecurity,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -38,6 +39,7 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post('avatar')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -72,6 +74,7 @@ export class UsersController {
   }
 
   @Patch('avatar')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ description: 'Removes avatar file.', type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -82,6 +85,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -91,6 +95,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })

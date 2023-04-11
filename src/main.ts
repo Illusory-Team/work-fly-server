@@ -13,25 +13,25 @@ async function bootstrap() {
     .setTitle('work-fly')
     .setDescription('work-fly api')
     .setVersion('0.0.1')
+    .addSecurity('csrf', {
+      type: 'apiKey',
+      in: 'header',
+      name: 'csrf-token',
+      description: 'csrf-token',
+    })
     .addBearerAuth(
       {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT access-token',
-        in: 'header',
+        type: 'apiKey',
+        name: 'access',
+        description: 'UNNECESSARY TO TYPE IN, using from cookies',
       },
       'access',
     )
     .addBearerAuth(
       {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT refresh-token',
-        in: 'header',
+        type: 'apiKey',
+        name: 'refresh',
+        description: 'UNNECESSARY TO TYPE IN, using from cookies',
       },
       'refresh',
     )
