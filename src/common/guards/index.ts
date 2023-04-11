@@ -1,2 +1,2 @@
-export { RefreshTokenGuard } from './refreshToken.guard';
-export { CsrfAndAccessGuard } from './csrfAndAccessToken.guard';
+export { csrfAndRefreshTokenGuard } from './csrfAndRefreshToken.guard';
+export { CsrfAndAccessTokenGuard } from './csrfAndAccessToken.guard';

@@ -1,17 +1,17 @@
 import { TokensService } from '../../tokens/tokens.service';
-import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AccessTokenGuard } from './accessToken.guard';
+import { IS_PUBLIC_KEY } from '../constants';
 
 @Injectable()
-export class CsrfAndAccessGuard extends AccessTokenGuard implements CanActivate {
-  constructor(private reflector: Reflector, private tokensService: TokensService) {
-    super();
-  }
+export class CsrfAndAccessTokenGuard implements CanActivate {
+  constructor(private reflector: Reflector, private tokensService: TokensService) {}
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-    const isPublic = this.reflector.getAllAndOverride('isPublic', [context.getHandler(), context.getClass()]);
+  canActivate(context: ExecutionContext): boolean {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
     if (isPublic) {
       return true;
     }
@@ -20,7 +20,15 @@ export class CsrfAndAccessGuard extends AccessTokenGuard implements CanActivate 
     const token = this.tokensService.getCsrfTokenFromRequest(request);
     this.tokensService.validateCSRFToken(token);
 
-    // if valid and it's not public => use access token guard next
-    return super.canActivate(context);
+    const { accessToken } = request.cookies;
+    if (!accessToken) {
+      throw new UnauthorizedException();
+    }
+
+    const tokenData = this.tokensService.validateAccessToken(accessToken);
+    if (!tokenData) {
+      throw new UnauthorizedException();
+    }
+    return true;
   }
 }

@@ -1,6 +1,6 @@
 import { PrismaService } from './../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { hash } from 'bcrypt';
 import { Token, CSRFToken } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
@@ -27,7 +27,7 @@ export class TokensService {
       // throws error when it's invalid or expired
       return this.jwtService.verify(csrfToken, { secret: this.configService.get('CSRF_SECRET_KEY') });
     } catch {
-      throw new ForbiddenException();
+      throw new UnauthorizedException();
     }
   }
 
@@ -54,6 +54,13 @@ export class TokensService {
   }
 
   async nullCSRFToken(csrfToken: string): Promise<CSRFToken> {
+    const currentToken = await this.prismaService.cSRFToken.findUnique({
+      where: { csrfToken },
+    });
+    if (!currentToken || currentToken.csrfToken !== csrfToken) {
+      throw new UnauthorizedException();
+    }
+
     return this.prismaService.cSRFToken.update({
       where: { csrfToken },
       data: { csrfToken: null },
@@ -80,6 +87,13 @@ export class TokensService {
   }
 
   async nullRefreshToken(refreshToken: string): Promise<Token> {
+    const currentToken = await this.prismaService.token.findUnique({
+      where: { refreshToken },
+    });
+    if (!currentToken || currentToken.refreshToken !== refreshToken) {
+      throw new UnauthorizedException();
+    }
+
     return this.prismaService.token.update({
       where: { refreshToken },
       data: { refreshToken: null },
