@@ -55,7 +55,7 @@ export class AuthController {
 
     this.setCookies(res, userData.tokens);
 
-    return res.json({ user: userData.user, csrfToken: userData.tokens.csrfToken });
+    return res.json(userData.data);
   }
 
   @Public()
@@ -68,7 +68,7 @@ export class AuthController {
 
     this.setCookies(res, userData.tokens);
 
-    return res.json({ user: userData.user, csrfToken: userData.tokens.csrfToken });
+    return res.json(userData.data);
   }
 
   @Patch('logout')
@@ -100,7 +100,7 @@ export class AuthController {
 
     this.setCookies(res, userData.tokens);
 
-    return res.json({ user: userData.user, csrfToken: userData.tokens.csrfToken });
+    return res.json(userData.data);
   }
 
   private setCookies(res: Response, tokens: TokensDto) {

@@ -12,7 +12,7 @@ export class PositionsService {
   }
 
   async findById(id: string): Promise<PositionDataDto> {
-    const position = await this.prismaService.position.findUnique({ where: { id } })
+    const position = await this.prismaService.position.findUnique({ where: { id } });
     return new PositionDataDto(position);
   }
 }
