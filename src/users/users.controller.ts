@@ -27,15 +27,9 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import {
-  IMAGE_VALIDATION,
-  NOTHING_PASSED,
-  NOT_FOUND,
-  ONE_MB,
-  UNAUTHORIZED,
-  USER_EXISTS,
-  VALIDATION,
-} from 'src/common/constants';
+import { ONE_MB } from '@constants/index';
+import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
+import { IMAGE_VALIDATION, VALIDATION } from '@constants/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('users')

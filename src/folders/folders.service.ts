@@ -13,7 +13,7 @@ import {
 import { CreateFolderDto, FolderDataDto, PatchFolderDto, UglyFolderDataDto } from './dto';
 import { FolderAppearancesService } from './appearance/folder-appearances.service';
 import { FOLDER_SELECT } from './folders.constants';
-import { NOTHING_PASSED, NOT_FOUND } from 'src/common/constants';
+import { NOTHING_PASSED, NOT_FOUND } from '@constants/error';
 
 @Injectable()
 export class FoldersService {

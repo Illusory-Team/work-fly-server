@@ -1,12 +1,2 @@
-export { PHONE_VALIDATION } from './phoneValidation.constant';
-export { USER_EXISTS } from './userExists.constant';
-export { UNAUTHORIZED } from './unauthorized.constant';
-export { EMAIL_PASSWORD_INCORRECT } from './emailPasswordIncorrect.constant';
-export { NO_SESSION } from './noSession.constant';
-export { NOT_FOUND } from './notFound.constant';
-export { VALIDATION } from './validation.constant';
-export { NOTHING_PASSED } from './nothingPassed.constant';
-export { POSITION } from './position.constant';
-export { IMAGE_VALIDATION } from './imageValidation.constant';
 export { ONE_MB } from './oneMb.constant';
 export { IS_PUBLIC_KEY } from './isPublicKey.constant';

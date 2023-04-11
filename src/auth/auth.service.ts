@@ -9,7 +9,7 @@ import { ForbiddenException, UnauthorizedException } from '@nestjs/common/except
 import { compare } from 'bcrypt';
 import { PureUserDto, PureRelationsUserDto } from 'src/users/dto';
 import { RegisterUserOwnerDto, SetSessionReturnDto, UserSessionDto } from './dto';
-import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, USER_EXISTS } from 'src/common/constants';
+import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, USER_EXISTS } from '@constants/error';
 import { User } from '@prisma/client';
 
 @Injectable()

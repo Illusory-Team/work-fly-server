@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { BadRequestException, Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { CreateUserDto, FindUserDto, PatchUserDto, PureUserDto } from './dto';
-import { NOTHING_PASSED, NOT_FOUND, USER_EXISTS } from 'src/common/constants';
+import { NOTHING_PASSED, NOT_FOUND, USER_EXISTS } from '@constants/error';
 
 @Injectable()
 export class UsersService {

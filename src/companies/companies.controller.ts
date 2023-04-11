@@ -10,7 +10,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, VALIDATION } from 'src/common/constants';
+import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
+import { VALIDATION } from '@constants/swagger';
 
 @ApiTags('companies')
 @Controller('companies')

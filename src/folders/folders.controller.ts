@@ -11,7 +11,7 @@ import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
 } from '@nestjs/swagger';
-import { NOTHING_PASSED, UNAUTHORIZED } from 'src/common/constants';
+import { NOTHING_PASSED, UNAUTHORIZED } from '@constants/error';
 
 @ApiTags('folders')
 @Controller('folders')

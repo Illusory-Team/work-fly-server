@@ -1,4 +1,4 @@
-import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from 'src/common/constants';
+import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { FolderAppearanceDataDto } from './dto/folder-appearance-data.dto';
 import { FolderAppearancesService } from './folder-appearances.service';
 import { Body, Controller, Param, Patch, Req } from '@nestjs/common';

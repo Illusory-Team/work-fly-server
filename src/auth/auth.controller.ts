@@ -17,7 +17,7 @@ import {
 import { TokensDto } from 'src/tokens/dto/tokens.dto';
 import { AuthResponseDto, LoginUserDto, RegisterUserOwnerDto, UserSessionDto } from './dto';
 import { CreateCompanyDto } from 'src/companies/dto';
-import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from 'src/common/constants';
+import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
 import { csrfAndRefreshTokenGuard } from 'src/common/guards';
 
 @ApiTags('auth')

@@ -5,7 +5,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { PHONE_VALIDATION } from '../constants';
+import { PHONE_VALIDATION } from '@constants/swagger';
 
 @ValidatorConstraint({ name: 'IsPhoneNumber', async: true })
 @Injectable()

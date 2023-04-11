@@ -4,7 +4,7 @@ import { FolderIconsService } from './services/folder-icons.service';
 import { ColorsService } from '../../colors/colors.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { NOTHING_PASSED, NOT_FOUND } from 'src/common/constants';
+import { NOTHING_PASSED, NOT_FOUND } from '@constants/error';
 import {
   CreateFolderAppearanceDto,
   PatchFolderAppearanceDto,
