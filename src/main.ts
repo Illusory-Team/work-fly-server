@@ -44,6 +44,8 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.CLIENT_URL,
     methods: 'GET,PATCH,PUT,POST,DELETE',
+    credentials: true,
+    allowedHeaders: 'content-type',
   });
   app.use(
     session({
