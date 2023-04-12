@@ -5,11 +5,11 @@ import { TokensService } from './../tokens/tokens.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UsersService } from './../users/users.service';
 import { Injectable } from '@nestjs/common';
-import { ForbiddenException, UnauthorizedException } from '@nestjs/common/exceptions';
+import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { compare } from 'bcrypt';
 import { PureUserDto, PureRelationsUserDto } from 'src/users/dto';
 import { RegisterUserOwnerDto, SetSessionReturnDto, UserSessionDto } from './dto';
-import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, USER_EXISTS } from '@constants/error';
+import { EMAIL_PASSWORD_INCORRECT, NOT_FOUND, NO_SESSION, USER_EXISTS } from '@constants/error';
 import { User } from '@prisma/client';
 
 @Injectable()
@@ -51,7 +51,7 @@ export class AuthService {
   async login(dto: LoginUserDto): Promise<UserReturnDto> {
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) {
-      throw new ForbiddenException(EMAIL_PASSWORD_INCORRECT);
+      throw new NotFoundException(NOT_FOUND);
     }
 
     const isEquals = await compare(dto.password, user.password);
