@@ -1,6 +1,5 @@
-import { TokensService } from './../tokens/tokens.service';
+import { TokensService } from '../tokens/tokens.service';
 import { CreateUserDto } from 'src/users/dto';
-import { RefreshTokenGuard } from './../common/guards/refreshToken.guard';
 import { HttpStatus } from '@nestjs/common/enums';
 import { AuthService } from './auth.service';
 import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
@@ -12,13 +11,15 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOkResponse,
+  ApiSecurity,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { TokensDto } from 'src/tokens/dto/tokens.dto';
-import { LoginUserDto, RegisterUserOwnerDto, UserDataDto, UserSessionDto } from './dto';
+import { AuthResponseDto, LoginUserDto, RegisterUserOwnerDto, UserSessionDto } from './dto';
 import { CreateCompanyDto } from 'src/companies/dto';
-import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from 'src/common/constants';
+import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
+import { csrfAndRefreshTokenGuard } from 'src/common/guards';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -36,14 +37,17 @@ export class AuthController {
 
   @Public()
   @Post('registration')
-  @ApiCreatedResponse({ description: 'The user and the company have been successfully created.', type: UserDataDto })
+  @ApiCreatedResponse({
+    description: 'The user and the company have been successfully created.',
+    type: AuthResponseDto,
+  })
   @ApiForbiddenResponse({ description: USER_EXISTS })
   @ApiForbiddenResponse({ description: NO_SESSION })
   async register(
     @Session() session: Record<string, any>,
     @Body() dto: CreateCompanyDto,
     @Res() res: Response,
-  ): Promise<Response<UserDataDto>> {
+  ): Promise<Response<AuthResponseDto>> {
     const userRegData: CreateUserDto = session.userAuth;
 
     const userOwnerDto: RegisterUserOwnerDto = { company: dto, user: userRegData };
@@ -52,24 +56,25 @@ export class AuthController {
 
     this.setCookies(res, userData.tokens);
 
-    return res.json(userData);
+    return res.json(userData.data);
   }
 
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ description: 'The user has been successfully logined.', type: UserDataDto })
+  @ApiOkResponse({ description: 'The user has been successfully logined.', type: AuthResponseDto })
   @ApiForbiddenResponse({ description: EMAIL_PASSWORD_INCORRECT })
-  async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<Response<UserDataDto>> {
+  async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<Response<AuthResponseDto>> {
     const userData = await this.authService.login(dto);
 
     this.setCookies(res, userData.tokens);
 
-    return res.json(userData);
+    return res.json(userData.data);
   }
 
   @Patch('logout')
-  @ApiBearerAuth('access')
+  @ApiSecurity('csrf')
+  @ApiBearerAuth('refresh')
   @ApiOkResponse({ description: 'The user has been successfully logout.' })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
@@ -84,12 +89,13 @@ export class AuthController {
   }
 
   @Public()
-  @UseGuards(RefreshTokenGuard)
+  @UseGuards(csrfAndRefreshTokenGuard)
   @Get('refresh')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('refresh')
-  @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: UserDataDto })
+  @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: AuthResponseDto })
   @ApiUnauthorizedResponse({ description: 'Unauthorized by refresh token.' })
-  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<UserDataDto>> {
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<AuthResponseDto>> {
     const { refreshToken } = req.cookies;
     const csrfToken = this.tokensService.getCsrfTokenFromRequest(req);
 
@@ -97,7 +103,7 @@ export class AuthController {
 
     this.setCookies(res, userData.tokens);
 
-    return res.json(userData);
+    return res.json(userData.data);
   }
 
   private setCookies(res: Response, tokens: TokensDto) {

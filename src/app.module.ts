@@ -1,4 +1,4 @@
-import { CsrfAndAccessGuard } from 'src/common/guards/';
+import { CsrfAndAccessTokenGuard } from 'src/common/guards/';
 import { FolderAppearancesModule } from './folders/appearance/folder-appearances.module';
 import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
@@ -33,6 +33,6 @@ import { ColorsModule } from './colors/colors.module';
     FolderAppearancesModule,
     ColorsModule,
   ],
-  providers: [{ provide: APP_GUARD, useClass: CsrfAndAccessGuard }, IsPhoneNumberConstraint],
+  providers: [{ provide: APP_GUARD, useClass: CsrfAndAccessTokenGuard }, IsPhoneNumberConstraint],
 })
 export class AppModule {}

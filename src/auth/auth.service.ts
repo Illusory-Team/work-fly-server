@@ -1,15 +1,16 @@
 import { PositionsService } from './../positions/positions.service';
 import { CompaniesService } from './../companies/companies.service';
-import { UserDataDto } from './dto/user-data.dto';
+import { UserReturnDto } from './dto';
 import { TokensService } from './../tokens/tokens.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UsersService } from './../users/users.service';
 import { Injectable } from '@nestjs/common';
-import { ForbiddenException, UnauthorizedException } from '@nestjs/common/exceptions';
+import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { compare } from 'bcrypt';
-import { PureUserDto } from 'src/users/dto';
-import { RegisterUserOwnerDto, UserSessionDto } from './dto';
-import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, USER_EXISTS } from 'src/common/constants';
+import { PureUserDto, PureRelationsUserDto } from 'src/users/dto';
+import { RegisterUserOwnerDto, SetSessionReturnDto, UserSessionDto } from './dto';
+import { EMAIL_PASSWORD_INCORRECT, NOT_FOUND, NO_SESSION, USER_EXISTS } from '@constants/error';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
     private positionsService: PositionsService,
   ) {}
 
-  async setSession(dto: UserSessionDto) {
+  async setSession(dto: UserSessionDto): Promise<SetSessionReturnDto> {
     const candidate = await this.usersService.findByEmail(dto.email);
     if (candidate) {
       throw new ForbiddenException(USER_EXISTS);
@@ -30,7 +31,7 @@ export class AuthService {
     return { ...dto, password: hashPassword };
   }
 
-  async register(dto: RegisterUserOwnerDto): Promise<UserDataDto> {
+  async register(dto: RegisterUserOwnerDto): Promise<UserReturnDto> {
     if (!dto.user) {
       throw new ForbiddenException(NO_SESSION);
     }
@@ -44,17 +45,13 @@ export class AuthService {
     const position = await this.positionsService.create(company.id, 'Owner');
     const user = await this.usersService.create({ ...dto.user, companyId: company.id, positionId: position.id });
 
-    const csrfToken = await this.tokensService.generateCSRFToken(user.id);
-    await this.tokensService.saveCSRFToken(user.id, csrfToken);
-    const tokens = await this.tokensService.generateTokens(user.id);
-    await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
-    return { user: new PureUserDto(user), tokens: { ...tokens, csrfToken }, position };
+    return this.makeUserData(user, position);
   }
 
-  async login(dto: LoginUserDto): Promise<UserDataDto> {
+  async login(dto: LoginUserDto): Promise<UserReturnDto> {
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) {
-      throw new ForbiddenException(EMAIL_PASSWORD_INCORRECT);
+      throw new NotFoundException(NOT_FOUND);
     }
 
     const isEquals = await compare(dto.password, user.password);
@@ -64,11 +61,7 @@ export class AuthService {
 
     const position = await this.positionsService.findById(user.positionId);
 
-    const csrfToken = await this.tokensService.generateCSRFToken(user.id);
-    await this.tokensService.saveCSRFToken(user.id, csrfToken);
-    const tokens = await this.tokensService.generateTokens(user.id);
-    await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
-    return { user: new PureUserDto(user), tokens: { ...tokens, csrfToken }, position };
+    return this.makeUserData(user, position);
   }
 
   async logout(refreshToken: string, csrfToken: string): Promise<void> {
@@ -79,7 +72,7 @@ export class AuthService {
     await this.tokensService.nullCSRFToken(csrfToken);
   }
 
-  async refresh(refreshToken: string, csrfToken: string): Promise<UserDataDto> {
+  async refresh(refreshToken: string, csrfToken: string): Promise<UserReturnDto> {
     if (!refreshToken || !csrfToken) {
       throw new UnauthorizedException();
     }
@@ -96,11 +89,17 @@ export class AuthService {
     const user = await this.usersService.findById(userRefreshData.userId);
     const position = await this.positionsService.findById(user.positionId);
 
-    const newCSRFToken = await this.tokensService.generateCSRFToken(user.id);
-    await this.tokensService.saveCSRFToken(user.id, newCSRFToken);
+    return this.makeUserData(user, position);
+  }
+
+  private async makeUserData(user: User, position): Promise<UserReturnDto> {
+    const csrfToken = await this.tokensService.generateCSRFToken(user.id);
+    await this.tokensService.saveCSRFToken(user.id, csrfToken);
     const tokens = await this.tokensService.generateTokens(user.id);
     await this.tokensService.saveRefreshToken(user.id, tokens.refreshToken);
 
-    return { user: new PureUserDto(user), tokens: { ...tokens, csrfToken: newCSRFToken }, position };
+    const responseUser: PureRelationsUserDto = { ...new PureUserDto(user), position };
+    const responseData = { user: responseUser, csrfToken };
+    return { data: responseData, tokens: { ...tokens } };
   }
 }

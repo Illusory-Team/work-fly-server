@@ -2,7 +2,7 @@ import { TokensService } from './../tokens/tokens.service';
 import { CompanyDataDto, CreateCompanyDto, PatchCompanyDto } from 'src/companies/dto';
 import { PrismaService } from './../prisma/prisma.service';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { NOTHING_PASSED, NOT_FOUND } from 'src/common/constants';
+import { NOTHING_PASSED, NOT_FOUND } from '@constants/error';
 
 @Injectable()
 export class CompaniesService {
@@ -29,7 +29,7 @@ export class CompaniesService {
 
     const company = await this.prismaService.company.findUnique({ where: { id } });
 
-    if(!company) {
+    if (!company) {
       throw new NotFoundException(NOT_FOUND);
     }
 

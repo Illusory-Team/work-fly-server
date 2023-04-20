@@ -13,38 +13,39 @@ async function bootstrap() {
     .setTitle('work-fly')
     .setDescription('work-fly api')
     .setVersion('0.0.1')
+    .addSecurity('csrf', {
+      type: 'apiKey',
+      in: 'header',
+      name: 'csrf-token',
+      description: 'csrf-token',
+    })
     .addBearerAuth(
       {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT access-token',
-        in: 'header',
+        type: 'apiKey',
+        name: 'access',
+        description: 'UNNECESSARY TO TYPE IN, using from cookies',
       },
       'access',
     )
     .addBearerAuth(
       {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT refresh-token',
-        in: 'header',
+        type: 'apiKey',
+        name: 'refresh',
+        description: 'UNNECESSARY TO TYPE IN, using from cookies',
       },
       'refresh',
     )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/swagger', app, document);
 
   app.use(cookieParser());
   app.enableCors({
-    origin: true,
+    origin: process.env.CLIENT_URL,
     methods: 'GET,PATCH,PUT,POST,DELETE',
     credentials: true,
+    allowedHeaders: 'content-type',
   });
   app.use(
     session({

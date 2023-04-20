@@ -7,10 +7,12 @@ import {
   ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiSecurity,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, VALIDATION } from 'src/common/constants';
+import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
+import { VALIDATION } from '@constants/swagger';
 
 @ApiTags('companies')
 @Controller('companies')
@@ -18,6 +20,7 @@ export class CompaniesController {
   constructor(private companiesService: CompaniesService) {}
 
   @Get(':id')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -27,6 +30,7 @@ export class CompaniesController {
   }
 
   @Patch(':id')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })

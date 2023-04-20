@@ -1,6 +1,6 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsString, Length } from 'class-validator';
-import { POSITION } from 'src/common/constants';
+import { POSITION } from '@constants/swagger';
 import { PureUserDto } from './pure-user.dto';
 
 export class CreateUserDto extends PickType(PureUserDto, ['email', 'fullName', 'phone', 'companyId'] as const) {

@@ -1,4 +1,4 @@
-import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from 'src/common/constants';
+import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { FolderAppearanceDataDto } from './dto/folder-appearance-data.dto';
 import { FolderAppearancesService } from './folder-appearances.service';
 import { Body, Controller, Param, Patch, Req } from '@nestjs/common';
@@ -10,6 +10,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiSecurity,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -20,6 +21,7 @@ export class FolderAppearancesController {
   constructor(private folderAppearancesService: FolderAppearancesService) {}
 
   @Patch(':id')
+  @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderAppearanceDataDto })
   @ApiBadRequestResponse({ description: NOTHING_PASSED })

@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TokensDto } from 'src/tokens/dto';
-import { PureRelationsUserDto } from 'src/users/dto';
+import { AuthResponseDto } from '../responses/auth-response.dto';
 
-export class UserDataDto {
+export class UserReturnDto {
   @ApiProperty({ description: 'User data without password' })
-  user: PureRelationsUserDto;
+  data: AuthResponseDto;
 
   @ApiProperty({ description: 'Refresh and Access tokens' })
   tokens: TokensDto;

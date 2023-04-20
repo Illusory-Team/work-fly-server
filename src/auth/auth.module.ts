@@ -5,12 +5,10 @@ import { UsersModule } from './../users/users.module';
 import { AuthController } from './auth.controller';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AccessTokenStrategy, RefreshTokenStrategy } from './strategies';
 
 @Module({
-  providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
+  providers: [AuthService],
   controllers: [AuthController],
-  exports: [AccessTokenStrategy, RefreshTokenStrategy],
   imports: [UsersModule, TokensModule, CompaniesModule, PositionsModule],
 })
 export class AuthModule {}
