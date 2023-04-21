@@ -25,10 +25,11 @@ export class CsrfAndAccessTokenGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    const tokenData = this.tokensService.validateAccessToken(accessToken);
-    if (!tokenData) {
+    const { userId } = this.tokensService.validateAccessToken(accessToken);
+    if (!userId) {
       throw new UnauthorizedException();
     }
+    request.user = { id: userId };
     return true;
   }
 }
