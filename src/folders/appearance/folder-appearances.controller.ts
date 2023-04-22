@@ -1,7 +1,7 @@
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { FolderAppearanceDataDto } from './dto/folder-appearance-data.dto';
 import { FolderAppearancesService } from './folder-appearances.service';
-import { Body, Controller, Patch, Req } from '@nestjs/common';
+import { Body, Controller, Param, Patch, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { PatchFolderAppearanceDto } from './dto';
 import {
@@ -20,7 +20,7 @@ import {
 export class FolderAppearancesController {
   constructor(private folderAppearancesService: FolderAppearancesService) {}
 
-  @Patch()
+  @Patch(':id')
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderAppearanceDataDto })
@@ -32,9 +32,10 @@ export class FolderAppearancesController {
   })
   patchOneFolderAppearance(
     @Req() req: Request,
+    @Param('id') id: string,
     @Body() dto: PatchFolderAppearanceDto,
   ): Promise<FolderAppearanceDataDto> {
     const { accessToken } = req.cookies;
-    return this.folderAppearancesService.patchOne(accessToken, req.user['id'], dto);
+    return this.folderAppearancesService.patchOne(accessToken, id, dto);
   }
 }
