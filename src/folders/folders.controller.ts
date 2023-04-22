@@ -1,5 +1,5 @@
 import { FoldersService } from './folders.service';
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req } from '@nestjs/common';
 import { CreateFolderDto, FolderDataDto, PatchFolderDto } from './dto';
 import { Request } from 'express';
 import {
@@ -39,15 +39,15 @@ export class FoldersController {
     return this.foldersService.findByUserId(accessToken);
   }
 
-  @Patch(':id')
+  @Patch()
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderDataDto })
   @ApiBadRequestResponse({ description: NOTHING_PASSED })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiForbiddenResponse({ description: 'You are not the owner of this folder.' })
-  patchOne(@Req() req: Request, @Param('id') id: string, @Body() dto: PatchFolderDto): Promise<FolderDataDto> {
+  patchOne(@Req() req: Request, @Body() dto: PatchFolderDto): Promise<FolderDataDto> {
     const { accessToken } = req.cookies;
-    return this.foldersService.patchOne(accessToken, id, dto);
+    return this.foldersService.patchOne(accessToken, req.user['id'], dto);
   }
 }

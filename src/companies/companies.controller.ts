@@ -1,5 +1,5 @@
 import { CompaniesService } from './companies.service';
-import { Body, Controller, Get, Param, Patch, Req } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { CompanyDataDto, PatchCompanyDto } from './dto';
 import {
@@ -19,25 +19,25 @@ import { VALIDATION } from '@constants/swagger';
 export class CompaniesController {
   constructor(private companiesService: CompaniesService) {}
 
-  @Get(':id')
+  @Get()
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  findById(@Param('id') id: string): Promise<CompanyDataDto> {
-    return this.companiesService.findById(id);
+  findById(@Req() req: Request): Promise<CompanyDataDto> {
+    return this.companiesService.findById(req.user['id']);
   }
 
-  @Patch(':id')
+  @Patch()
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiBadRequestResponse({ schema: { anyOf: [{ description: VALIDATION }, { description: NOTHING_PASSED }] } })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  patchOne(@Req() req: Request, @Param('id') id: string, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
+  patchOne(@Req() req: Request, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
     const { accessToken } = req.cookies;
-    return this.companiesService.patchOne(accessToken, id, dto);
+    return this.companiesService.patchOne(accessToken, req.user['id'], dto);
   }
 }

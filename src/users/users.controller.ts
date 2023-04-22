@@ -2,7 +2,6 @@ import { UsersService } from './users.service';
 import {
   Controller,
   Get,
-  Headers,
   Patch,
   Body,
   Req,
