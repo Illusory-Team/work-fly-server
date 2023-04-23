@@ -2,15 +2,11 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { TokensService } from 'src/tokens/tokens.service';
 
 @Injectable()
-export class csrfAndRefreshTokenGuard implements CanActivate {
+export class RefreshTokenGuard implements CanActivate {
   constructor(private tokensService: TokensService) {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-
-    const token = this.tokensService.getCsrfTokenFromRequest(request);
-    this.tokensService.validateCSRFToken(token);
-
     const { refreshToken } = request.cookies;
     if (!refreshToken) {
       throw new UnauthorizedException();

@@ -19,7 +19,7 @@ import { TokensDto } from 'src/tokens/dto/tokens.dto';
 import { AuthResponseDto, LoginUserDto, RegisterUserOwnerDto, UserSessionDto } from './dto';
 import { CreateCompanyDto } from 'src/companies/dto';
 import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
-import { csrfAndRefreshTokenGuard } from 'src/common/guards';
+import { RefreshTokenGuard } from 'src/common/guards';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -89,17 +89,15 @@ export class AuthController {
   }
 
   @Public()
-  @UseGuards(csrfAndRefreshTokenGuard)
+  @UseGuards(RefreshTokenGuard)
   @Get('refresh')
-  @ApiSecurity('csrf')
   @ApiBearerAuth('refresh')
   @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: AuthResponseDto })
   @ApiUnauthorizedResponse({ description: 'Unauthorized by refresh token.' })
   async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<AuthResponseDto>> {
     const { refreshToken } = req.cookies;
-    const csrfToken = this.tokensService.getCsrfTokenFromRequest(req);
 
-    const userData = await this.authService.refresh(refreshToken, csrfToken);
+    const userData = await this.authService.refresh(refreshToken);
 
     this.setCookies(res, userData.tokens);
 

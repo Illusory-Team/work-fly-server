@@ -72,17 +72,14 @@ export class AuthService {
     await this.tokensService.nullCSRFToken(csrfToken);
   }
 
-  async refresh(refreshToken: string, csrfToken: string): Promise<UserReturnDto> {
-    if (!refreshToken || !csrfToken) {
+  async refresh(refreshToken: string): Promise<UserReturnDto> {
+    if (!refreshToken) {
       throw new UnauthorizedException();
     }
 
     const userRefreshData = this.tokensService.validateRefreshToken(refreshToken);
     const refreshTokenFromDb = await this.tokensService.findRefreshToken(refreshToken);
-    const userCSRFData = this.tokensService.validateCSRFToken(csrfToken);
-    const csrfTokenFromDb = await this.tokensService.findCSRFToken(csrfToken);
-
-    if (!userRefreshData || !refreshTokenFromDb || !userCSRFData || !csrfTokenFromDb) {
+    if (!userRefreshData || !refreshTokenFromDb) {
       throw new UnauthorizedException();
     }
 
