@@ -2,7 +2,6 @@ import { UsersService } from './users.service';
 import {
   Controller,
   Get,
-  Param,
   Patch,
   Body,
   Req,
@@ -84,17 +83,17 @@ export class UsersController {
     return this.usersService.removeAvatar(accessToken);
   }
 
-  @Get(':id')
+  @Get()
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  findById(@Param('id') id: string): Promise<FindUserDto> {
-    return this.usersService.findWithPosition(id);
+  findById(@Req() req: Request): Promise<FindUserDto> {
+    return this.usersService.findWithPosition(req.user['id']);
   }
 
-  @Patch(':id')
+  @Patch()
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })
@@ -104,8 +103,8 @@ export class UsersController {
     schema: { anyOf: [{ description: USER_EXISTS }, { description: 'You are not the owner of this account.' }] },
   })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  patchOne(@Req() req: Request, @Param('id') id: string, @Body() dto: PatchUserDto): Promise<PureUserDto> {
+  patchOne(@Req() req: Request, @Body() dto: PatchUserDto): Promise<PureUserDto> {
     const { accessToken } = req.cookies;
-    return this.usersService.patchOne(accessToken, id, dto);
+    return this.usersService.patchOne(accessToken, req.user['id'], dto);
   }
 }
