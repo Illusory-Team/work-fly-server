@@ -2,12 +2,13 @@ import { TokensService } from '../../tokens/tokens.service';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../constants';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class CsrfAndAccessTokenGuard implements CanActivate {
-  constructor(private reflector: Reflector, private tokensService: TokensService) {}
+  constructor(private reflector: Reflector, private tokensService: TokensService, private usersService: UsersService) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -18,7 +19,7 @@ export class CsrfAndAccessTokenGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const token = this.tokensService.getCsrfTokenFromRequest(request);
-    this.tokensService.validateCSRFToken(token);
+    await this.tokensService.validateCSRFToken(token);
 
     const { accessToken } = request.cookies;
     if (!accessToken) {
@@ -29,7 +30,9 @@ export class CsrfAndAccessTokenGuard implements CanActivate {
     if (!userId) {
       throw new UnauthorizedException();
     }
-    request.user = { id: userId };
+    const user = await this.usersService.findById(userId);
+    request.user = user;
+
     return true;
   }
 }

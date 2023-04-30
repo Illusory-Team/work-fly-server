@@ -14,6 +14,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 
 @ApiTags('folders/appearance')
 @Controller('folders/appearance')
@@ -35,7 +36,6 @@ export class FolderAppearancesController {
     @Param('id') id: string,
     @Body() dto: PatchFolderAppearanceDto,
   ): Promise<FolderAppearanceDataDto> {
-    const { accessToken } = req.cookies;
-    return this.folderAppearancesService.patchOne(accessToken, id, dto);
+    return this.folderAppearancesService.patchOne(req.user as User, id, dto);
   }
 }

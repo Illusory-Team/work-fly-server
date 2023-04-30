@@ -1,9 +1,9 @@
-import { PositionsService } from './../positions/positions.service';
-import { CompaniesService } from './../companies/companies.service';
+import { PositionsService } from '../positions/positions.service';
+import { CompaniesService } from '../companies/companies.service';
 import { UserReturnDto } from './dto';
-import { TokensService } from './../tokens/tokens.service';
+import { TokensService } from '../tokens/tokens.service';
 import { LoginUserDto } from './dto/login-user.dto';
-import { UsersService } from './../users/users.service';
+import { UsersService } from '../users/users.service';
 import { Injectable } from '@nestjs/common';
 import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { compare } from 'bcrypt';

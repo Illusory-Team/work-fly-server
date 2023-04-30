@@ -13,6 +13,7 @@ import {
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { VALIDATION } from '@constants/swagger';
+import { User } from '@prisma/client';
 
 @ApiTags('companies')
 @Controller('companies')
@@ -37,7 +38,6 @@ export class CompaniesController {
   @ApiBadRequestResponse({ schema: { anyOf: [{ description: VALIDATION }, { description: NOTHING_PASSED }] } })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   patchOne(@Req() req: Request, @Param('id') id: string, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
-    const { accessToken } = req.cookies;
-    return this.companiesService.patchOne(accessToken, id, dto);
+    return this.companiesService.patchOne(req.user as User, id, dto);
   }
 }

@@ -1,5 +1,5 @@
-import { TokensModule } from './../tokens/tokens.module';
-import { PrismaModule } from './../prisma/prisma.module';
+import { TokensModule } from '../tokens/tokens.module';
+import { PrismaModule } from '../prisma/prisma.module';
 import { forwardRef, Module } from '@nestjs/common';
 import { FoldersController } from './folders.controller';
 import { FoldersService } from './folders.service';

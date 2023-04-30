@@ -12,6 +12,7 @@ import {
   FolderAppearanceDataDto,
 } from './dto';
 import { CreateFolderAppearance } from './interfaces';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class FolderAppearancesService {
@@ -35,15 +36,14 @@ export class FolderAppearancesService {
     });
   }
 
-  async patchOne(accessToken: string, id: string, dto: PatchFolderAppearanceDto): Promise<FolderAppearanceDataDto> {
+  async patchOne(user: User, id: string, dto: PatchFolderAppearanceDto): Promise<FolderAppearanceDataDto> {
     if (Object.keys(dto).length < 1) {
       throw new BadRequestException(NOTHING_PASSED);
     }
 
-    const { userId } = this.tokensService.validateAccessToken(accessToken);
     const folder = await this.foldersService.findById(id);
 
-    if (folder.owner.id !== userId) {
+    if (folder.owner.id !== user.id) {
       throw new ForbiddenException();
     }
 

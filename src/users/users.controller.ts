@@ -31,6 +31,7 @@ import { ONE_MB } from '@constants/index';
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
 import { IMAGE_VALIDATION, VALIDATION } from '@constants/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { User } from '@prisma/client';
 
 @ApiTags('users')
 @Controller('users')
@@ -68,8 +69,7 @@ export class UsersController {
     )
     file: Express.Multer.File,
   ): Promise<PureUserDto> {
-    const { accessToken } = req.cookies;
-    return this.usersService.saveAvatar(accessToken, file);
+    return this.usersService.saveAvatar(req.user as User, file);
   }
 
   @Patch('avatar')
@@ -79,8 +79,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   removeAvatar(@Req() req: Request): Promise<PureUserDto> {
-    const { accessToken } = req.cookies;
-    return this.usersService.removeAvatar(accessToken);
+    return this.usersService.removeAvatar(req.user as User);
   }
 
   @Get()
@@ -104,7 +103,6 @@ export class UsersController {
   })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   patchOne(@Req() req: Request, @Body() dto: PatchUserDto): Promise<PureUserDto> {
-    const { accessToken } = req.cookies;
-    return this.usersService.patchOne(accessToken, req.user['id'], dto);
+    return this.usersService.patchOne(req.user as User, dto);
   }
 }

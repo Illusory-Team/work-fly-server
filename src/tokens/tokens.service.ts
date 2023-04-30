@@ -1,4 +1,4 @@
-import { PrismaService } from './../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { hash } from 'bcrypt';
@@ -22,10 +22,14 @@ export class TokensService {
       req.headers['x-xsrf-token']) as string;
   }
 
-  validateCSRFToken(csrfToken: string) {
+  async validateCSRFToken(csrfToken: string) {
     try {
       // throws error when it's invalid or expired
-      return this.jwtService.verify(csrfToken, { secret: this.configService.get('CSRF_SECRET_KEY') });
+      this.jwtService.verify(csrfToken, { secret: this.configService.get('CSRF_SECRET_KEY') });
+      const token = await this.findCSRFToken(csrfToken);
+      if (!token) {
+        throw new UnauthorizedException();
+      }
     } catch {
       throw new UnauthorizedException();
     }

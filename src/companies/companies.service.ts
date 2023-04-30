@@ -1,8 +1,9 @@
-import { TokensService } from './../tokens/tokens.service';
+import { TokensService } from '../tokens/tokens.service';
 import { CompanyDataDto, CreateCompanyDto, PatchCompanyDto } from 'src/companies/dto';
-import { PrismaService } from './../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { NOTHING_PASSED, NOT_FOUND } from '@constants/error';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class CompaniesService {
@@ -21,11 +22,10 @@ export class CompaniesService {
     return this.prismaService.company.findUnique({ where: { id } });
   }
 
-  async patchOne(accessToken: string, id: string, dto: PatchCompanyDto): Promise<CompanyDataDto> {
+  async patchOne(user: User, id: string, dto: PatchCompanyDto): Promise<CompanyDataDto> {
     if (Object.keys(dto).length < 1) {
       throw new BadRequestException(NOTHING_PASSED);
     }
-    const { userId } = this.tokensService.validateAccessToken(accessToken);
 
     const company = await this.prismaService.company.findUnique({ where: { id } });
 

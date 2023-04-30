@@ -13,6 +13,7 @@ import {
   ApiSecurity,
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, UNAUTHORIZED } from '@constants/error';
+import { User } from '@prisma/client';
 
 @ApiTags('folders')
 @Controller('folders')
@@ -25,8 +26,7 @@ export class FoldersController {
   @ApiCreatedResponse({ type: FolderDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   create(@Req() req: Request, @Body() dto: CreateFolderDto): Promise<FolderDataDto> {
-    const { accessToken } = req.cookies;
-    return this.foldersService.create(accessToken, dto);
+    return this.foldersService.create(req.user as User, dto);
   }
 
   @Get()
@@ -35,8 +35,7 @@ export class FoldersController {
   @ApiOkResponse({ type: FolderDataDto, isArray: true })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   findByUserId(@Req() req: Request): Promise<FolderDataDto[]> {
-    const { accessToken } = req.cookies;
-    return this.foldersService.findByUserId(accessToken);
+    return this.foldersService.findByUserId(req.user as User);
   }
 
   @Patch(':id')
@@ -47,7 +46,6 @@ export class FoldersController {
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiForbiddenResponse({ description: 'You are not the owner of this folder.' })
   patchOne(@Req() req: Request, @Param('id') id: string, @Body() dto: PatchFolderDto): Promise<FolderDataDto> {
-    const { accessToken } = req.cookies;
-    return this.foldersService.patchOne(accessToken, id, dto);
+    return this.foldersService.patchOne(req.user as User, id, dto);
   }
 }
