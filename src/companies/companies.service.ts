@@ -1,6 +1,6 @@
-import { TokensService } from './../tokens/tokens.service';
-import { CompanyDataDto, CreateCompanyDto, PatchCompanyDto } from 'src/companies/dto';
-import { PrismaService } from './../prisma/prisma.service';
+import { TokensService } from 'tokens/tokens.service';
+import { CompanyDataDto, CreateCompanyDto, PatchCompanyDto } from 'companies/dto';
+import { PrismaService } from 'prisma/prisma.service';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { NOTHING_PASSED, NOT_FOUND } from '@constants/error';
 

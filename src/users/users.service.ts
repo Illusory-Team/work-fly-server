@@ -1,7 +1,7 @@
-import { FilesService } from './../files/files.service';
-import { PositionsService } from './../positions/positions.service';
-import { TokensService } from './../tokens/tokens.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { FilesService } from 'files/files.service';
+import { PositionsService } from 'positions/positions.service';
+import { TokensService } from 'tokens/tokens.service';
+import { PrismaService } from 'prisma/prisma.service';
 import { BadRequestException, Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { CreateUserDto, FindUserDto, PatchUserDto, PureUserDto } from './dto';
