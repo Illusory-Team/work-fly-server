@@ -4,7 +4,7 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { AuthService } from './auth.service';
 import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Public } from '@decorators/';
+import { Public } from '@decorators';
 import { REFRESH_TOKEN_TIME, ACCESS_TOKEN_TIME } from 'tokens/tokens.constants';
 import {
   ApiBearerAuth,
@@ -19,7 +19,7 @@ import { TokensDto } from 'tokens/dto/tokens.dto';
 import { AuthResponseDto, LoginUserDto, RegisterUserOwnerDto, UserSessionDto } from './dto';
 import { CreateCompanyDto } from 'companies/dto';
 import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
-import { RefreshTokenGuard } from '@guards/';
+import { RefreshTokenGuard } from '@guards';
 
 @ApiTags('auth')
 @Controller('auth')
