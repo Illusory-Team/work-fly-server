@@ -19,8 +19,8 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@constants/*": ["common/constants/*"],
-      "@decorators/*": ["common/decorators/*"],
-      "@guards/*": ["common/guards/*"]
+      "@decorators/*": ["common/decorators/"],
+      "@guards/*": ["common/guards/"]
     }
   }
 }

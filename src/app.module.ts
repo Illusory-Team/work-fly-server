@@ -1,4 +1,4 @@
-import { CsrfAndAccessTokenGuard } from '@guards/index';
+import { CsrfAndAccessTokenGuard } from '@guards/';
 import { FolderAppearancesModule } from 'folders/appearance/folder-appearances.module';
 import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
@@ -8,7 +8,7 @@ import { AuthModule } from 'auth/auth.module';
 import { TokensModule } from 'tokens/tokens.module';
 import { PrismaModule } from 'prisma/prisma.module';
 import { CompaniesModule } from 'companies/companies.module';
-import { IsPhoneNumberConstraint } from '@decorators/index';
+import { IsPhoneNumberConstraint } from '@decorators/';
 import { PositionsModule } from 'positions/positions.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';

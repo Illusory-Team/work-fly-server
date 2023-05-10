@@ -1,4 +1,4 @@
-import { IsPhoneNumber } from '@decorators/index';
+import { IsPhoneNumber } from '@decorators/';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { IsDateString, IsEmail, IsNotEmpty, IsString } from 'class-validator';
