@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TokensDto } from 'src/tokens/dto';
-import { PureRelationsUserDto } from 'src/users/dto';
+import { TokensDto } from 'tokens/dto';
+import { PureRelationsUserDto } from 'users/dto';
 
 export class UserDataDto {
   @ApiProperty({ description: 'User data without password' })

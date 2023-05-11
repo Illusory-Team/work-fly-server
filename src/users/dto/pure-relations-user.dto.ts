@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PureUserDto } from './pure-user.dto';
 import { POSITION } from '@constants/swagger';
-import { PositionDataDto } from 'src/positions/dto';
+import { PositionDataDto } from 'positions/dto';
 
 export class PureRelationsUserDto extends PureUserDto {
   @ApiProperty({ description: POSITION })
