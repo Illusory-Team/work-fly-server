@@ -2,7 +2,6 @@ import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { FolderAppearanceDataDto } from './dto/folder-appearance-data.dto';
 import { FolderAppearancesService } from './folder-appearances.service';
 import { Body, Controller, Param, Patch, Req } from '@nestjs/common';
-import { Request } from 'express';
 import { PatchFolderAppearanceDto } from './dto';
 import {
   ApiBadRequestResponse,
@@ -14,7 +13,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import { UserRequest } from 'src/common/types/UserRequest';
 
 @ApiTags('folders/appearance')
 @Controller('folders/appearance')
@@ -32,10 +31,10 @@ export class FolderAppearancesController {
     schema: { anyOf: [{ description: NOT_FOUND }, { description: 'Incorrect icon/color name.' }] },
   })
   patchOneFolderAppearance(
-    @Req() req: Request,
+    @Req() req: UserRequest,
     @Param('id') id: string,
     @Body() dto: PatchFolderAppearanceDto,
   ): Promise<FolderAppearanceDataDto> {
-    return this.folderAppearancesService.patchOne(req.user as User, id, dto);
+    return this.folderAppearancesService.patchOne(req.user, id, dto);
   }
 }
