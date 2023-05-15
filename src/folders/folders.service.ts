@@ -1,7 +1,7 @@
-import { UsersService } from '../users/users.service';
-import { TokensService } from '../tokens/tokens.service';
+import { UsersService } from 'users/users.service';
+import { TokensService } from 'tokens/tokens.service';
 import { FolderTypesService } from './services/folder-types.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from 'prisma/prisma.service';
 import {
   BadRequestException,
   ForbiddenException,

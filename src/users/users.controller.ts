@@ -30,7 +30,7 @@ import { ONE_MB } from '@constants/index';
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
 import { IMAGE_VALIDATION, VALIDATION } from '@constants/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UserRequest } from 'src/common/types/UserRequest';
+import { UserRequest } from 'common/types/UserRequest';
 
 @ApiTags('users')
 @Controller('users')
@@ -81,7 +81,7 @@ export class UsersController {
     return this.usersService.removeAvatar(req.user);
   }
 
-  @Get()
+  @Get('me')
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })
@@ -91,7 +91,7 @@ export class UsersController {
     return this.usersService.findWithPosition(req.user.id);
   }
 
-  @Patch()
+  @Patch('me')
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })

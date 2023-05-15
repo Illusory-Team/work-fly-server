@@ -13,7 +13,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { UserRequest } from 'src/common/types/UserRequest';
+import { UserRequest } from 'common/types/UserRequest';
 
 @ApiTags('folders/appearance')
 @Controller('folders/appearance')

@@ -12,7 +12,7 @@ import {
   ApiSecurity,
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, UNAUTHORIZED } from '@constants/error';
-import { UserRequest } from 'src/common/types/UserRequest';
+import { UserRequest } from 'common/types/UserRequest';
 
 @ApiTags('folders')
 @Controller('folders')

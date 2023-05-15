@@ -12,7 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { VALIDATION } from '@constants/swagger';
-import { UserRequest } from 'src/common/types/UserRequest';
+import { UserRequest } from 'common/types/UserRequest';
 
 @ApiTags('companies')
 @Controller('companies')

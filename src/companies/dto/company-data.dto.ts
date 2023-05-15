@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ENTITY_ID } from '@constants/swagger';
-import { IsPhoneNumber } from 'src/common/decorators';
+import { IsPhoneNumber } from '@decorators';
 
 export class CompanyDataDto {
   @ApiProperty({ example: ENTITY_ID })
