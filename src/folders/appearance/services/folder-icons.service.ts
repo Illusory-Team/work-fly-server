@@ -6,6 +6,6 @@ export class FolderIconsService {
   constructor(private prismaService: PrismaService) {}
 
   findByValue(icon: string) {
-    return this.prismaService.folderIcon.findUnique({where: {icon}})
+    return this.prismaService.folderIcon.findUnique({ where: { icon } });
   }
 }
