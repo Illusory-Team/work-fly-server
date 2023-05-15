@@ -82,7 +82,7 @@ export class UsersController {
     return this.usersService.removeAvatar(req.user as User);
   }
 
-  @Get()
+  @Get('me')
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })
@@ -92,7 +92,7 @@ export class UsersController {
     return this.usersService.findWithPosition(req.user['id']);
   }
 
-  @Patch()
+  @Patch('me')
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })

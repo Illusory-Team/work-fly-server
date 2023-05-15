@@ -1,11 +1,11 @@
-import { TokensService } from '../tokens/tokens.service';
-import { CreateUserDto } from 'src/users/dto';
+import { TokensService } from 'tokens/tokens.service';
+import { CreateUserDto } from 'users/dto';
 import { HttpStatus } from '@nestjs/common/enums';
 import { AuthService } from './auth.service';
 import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Public } from 'src/common/decorators';
-import { REFRESH_TOKEN_TIME, ACCESS_TOKEN_TIME } from 'src/tokens/tokens.constants';
+import { Public } from '@decorators';
+import { REFRESH_TOKEN_TIME, ACCESS_TOKEN_TIME } from 'tokens/tokens.constants';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -15,11 +15,11 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { TokensDto } from 'src/tokens/dto/tokens.dto';
+import { TokensDto } from 'tokens/dto/tokens.dto';
 import { AuthResponseDto, LoginUserDto, RegisterUserOwnerDto, UserSessionDto } from './dto';
-import { CreateCompanyDto } from 'src/companies/dto';
+import { CreateCompanyDto } from 'companies/dto';
 import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
-import { RefreshTokenGuard } from 'src/common/guards';
+import { RefreshTokenGuard } from '@guards';
 
 @ApiTags('auth')
 @Controller('auth')

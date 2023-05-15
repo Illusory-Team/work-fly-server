@@ -1,4 +1,4 @@
-import { PureUserDto } from 'src/users/dto';
+import { PureUserDto } from 'users/dto';
 import { PartialType, PickType } from '@nestjs/swagger';
 
 export class PatchUserDto extends PartialType(
