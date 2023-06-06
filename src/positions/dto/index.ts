@@ -1,1 +1,1 @@
-export {PositionDataDto} from './position-data.dto'
+export { PositionDataDto } from './position-data.dto';

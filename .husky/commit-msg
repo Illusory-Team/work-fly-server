@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+message="$(cat $1)"
+requiredPattern="^\[(feature|bugfix|refactor|docs|test)\/WF-[0-9]+\]:[- a-zA-Z0-9]+$"
+if ! [[ $message =~ $requiredPattern ]];
+then
+  echo "commit-pattern error"
+  echo "valid example: [feature|bugfix|refactor|docs|test/WF-(any nums)]: any english letters, '-', and 0-9 nums"
+  echo "for example: [feature/WF-105]: user auth flow implementation"
+  exit 1
+fi

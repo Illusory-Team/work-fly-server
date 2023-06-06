@@ -5,6 +5,6 @@ import { PositionsService } from './positions.service';
 @Module({
   providers: [PositionsService],
   imports: [PrismaModule],
-  exports: [PositionsService]
+  exports: [PositionsService],
 })
 export class PositionsModule {}
