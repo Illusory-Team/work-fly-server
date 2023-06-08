@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { ENTITY_ID } from '@constants/swagger';
 import { IsPhoneNumber } from '@decorators';
 
 export class CompanyDataDto {
-  @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
+  @ApiProperty({ example: ENTITY_ID })
   id: string;
 
   @ApiProperty({ example: 'google', required: true })

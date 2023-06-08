@@ -39,7 +39,7 @@ export class UsersService {
     return this.prismaService.user.findUnique({ where: { email } });
   }
 
-  async patchOne(accessToken: string, id: string, dto: PatchUserDto): Promise<PureUserDto> {
+  async patchOne(user: User, dto: PatchUserDto): Promise<PureUserDto> {
     if (Object.keys(dto).length < 1) {
       throw new BadRequestException(NOTHING_PASSED);
     }
@@ -51,41 +51,25 @@ export class UsersService {
       dto.birthday = new Date(dto.birthday);
     }
 
-    const user = await this.prismaService.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new NotFoundException(NOT_FOUND);
-    }
-
-    const { userId } = this.tokensService.validateAccessToken(accessToken);
-    if (user.id !== userId) {
-      throw new ForbiddenException();
-    }
-
-    const updatedUser = await this.prismaService.user.update({ where: { id }, data: { ...dto } });
+    const updatedUser = await this.prismaService.user.update({ where: { id: user.id }, data: { ...dto } });
     return new PureUserDto(updatedUser);
   }
 
-  async saveAvatar(accessToken: string, file: Express.Multer.File): Promise<PureUserDto> {
-    const { userId } = this.tokensService.validateAccessToken(accessToken);
-    const user = await this.prismaService.user.findUnique({ where: { id: userId } });
+  async saveAvatar(user: User, file: Express.Multer.File): Promise<PureUserDto> {
+    const fileName = await this.filesService.saveAvatar(user.id, file, user.avatar);
 
-    const fileName = await this.filesService.saveAvatar(userId, file, user.avatar);
-
-    const updatedUser = await this.prismaService.user.update({ where: { id: userId }, data: { avatar: fileName } });
+    const updatedUser = await this.prismaService.user.update({ where: { id: user.id }, data: { avatar: fileName } });
     return new PureUserDto(updatedUser);
   }
 
-  async removeAvatar(accessToken: string): Promise<PureUserDto> {
-    const { userId } = this.tokensService.validateAccessToken(accessToken);
-    const user = await this.prismaService.user.findUnique({ where: { id: userId } });
-
+  async removeAvatar(user: User): Promise<PureUserDto> {
     if (!user.avatar) {
       throw new NotFoundException(NOT_FOUND);
     }
 
-    await this.filesService.removeAvatar(userId, user.avatar);
+    await this.filesService.removeAvatar(user.id, user.avatar);
 
-    const updatedUser = await this.prismaService.user.update({ where: { id: userId }, data: { avatar: null } });
+    const updatedUser = await this.prismaService.user.update({ where: { id: user.id }, data: { avatar: null } });
     return new PureUserDto(updatedUser);
   }
 }

@@ -1,10 +1,11 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ENTITY_ID } from '@constants/swagger';
 import { UserFolderDto } from '../user-folder.dto';
 import { UsersCountDto } from '../users-count.dto';
 
 export class UglyFolderDataDto extends PickType(UsersCountDto, ['_count'] as const) {
-  @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
+  @ApiProperty({ example: ENTITY_ID })
   id;
 
   @ApiProperty({ example: 'Frontend tasks' })

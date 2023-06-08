@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Position } from '@prisma/client';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ENTITY_ID } from '@constants/swagger';
 
 export class PositionDataDto {
-  @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
+  @ApiProperty({ example: ENTITY_ID })
   id: string;
 
   @ApiProperty({ example: 'Owner', required: true })

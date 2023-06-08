@@ -2,9 +2,10 @@ import { IsPhoneNumber } from '@decorators';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { IsDateString, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { ENTITY_ID } from '@constants/swagger';
 
 export class PureUserDto {
-  @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
+  @ApiProperty({ example: ENTITY_ID })
   id: string;
 
   @ApiProperty({ example: 'user@gmail.com' })
@@ -40,7 +41,7 @@ export class PureUserDto {
   @IsNotEmpty()
   avatar: string;
 
-  @ApiProperty({ example: '1efe537f-e380-4168-959b-f864f2196369' })
+  @ApiProperty({ example: ENTITY_ID })
   companyId: string;
 
   constructor(model: User) {

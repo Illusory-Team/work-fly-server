@@ -1,6 +1,5 @@
 import { CompaniesService } from './companies.service';
 import { Body, Controller, Get, Param, Patch, Req } from '@nestjs/common';
-import { Request } from 'express';
 import { CompanyDataDto, PatchCompanyDto } from './dto';
 import {
   ApiBadRequestResponse,
@@ -13,6 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { VALIDATION } from '@constants/swagger';
+import { UserRequest } from 'common/types/UserRequest';
 
 @ApiTags('companies')
 @Controller('companies')
@@ -36,8 +36,7 @@ export class CompaniesController {
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiBadRequestResponse({ schema: { anyOf: [{ description: VALIDATION }, { description: NOTHING_PASSED }] } })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  patchOne(@Req() req: Request, @Param('id') id: string, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
-    const { accessToken } = req.cookies;
-    return this.companiesService.patchOne(accessToken, id, dto);
+  patchOne(@Req() req: UserRequest, @Param('id') id: string, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
+    return this.companiesService.patchOne(req.user, id, dto);
   }
 }

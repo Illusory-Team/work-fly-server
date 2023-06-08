@@ -13,7 +13,6 @@ import {
   FileTypeValidator,
 } from '@nestjs/common';
 import { FindUserDto, PatchUserDto, PureUserDto } from './dto';
-import { Request } from 'express';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -31,6 +30,7 @@ import { ONE_MB } from '@constants/index';
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
 import { IMAGE_VALIDATION, VALIDATION } from '@constants/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UserRequest } from 'common/types/UserRequest';
 
 @ApiTags('users')
 @Controller('users')
@@ -57,7 +57,7 @@ export class UsersController {
   @ApiBadRequestResponse({ schema: { anyOf: [{ description: IMAGE_VALIDATION }, { description: NOTHING_PASSED }] } })
   @UseInterceptors(FileInterceptor('file'))
   saveAvatar(
-    @Req() req: Request,
+    @Req() req: UserRequest,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -68,8 +68,7 @@ export class UsersController {
     )
     file: Express.Multer.File,
   ): Promise<PureUserDto> {
-    const { accessToken } = req.cookies;
-    return this.usersService.saveAvatar(accessToken, file);
+    return this.usersService.saveAvatar(req.user, file);
   }
 
   @Patch('avatar')
@@ -78,9 +77,8 @@ export class UsersController {
   @ApiOkResponse({ description: 'Removes avatar file.', type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  removeAvatar(@Req() req: Request): Promise<PureUserDto> {
-    const { accessToken } = req.cookies;
-    return this.usersService.removeAvatar(accessToken);
+  removeAvatar(@Req() req: UserRequest): Promise<PureUserDto> {
+    return this.usersService.removeAvatar(req.user);
   }
 
   @Get('me')
@@ -89,8 +87,8 @@ export class UsersController {
   @ApiOkResponse({ type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  findById(@Req() req: Request): Promise<FindUserDto> {
-    return this.usersService.findWithPosition(req.user['id']);
+  findById(@Req() req: UserRequest): Promise<FindUserDto> {
+    return this.usersService.findWithPosition(req.user.id);
   }
 
   @Patch('me')
@@ -103,8 +101,7 @@ export class UsersController {
     schema: { anyOf: [{ description: USER_EXISTS }, { description: 'You are not the owner of this account.' }] },
   })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  patchOne(@Req() req: Request, @Body() dto: PatchUserDto): Promise<PureUserDto> {
-    const { accessToken } = req.cookies;
-    return this.usersService.patchOne(accessToken, req.user['id'], dto);
+  patchOne(@Req() req: UserRequest, @Body() dto: PatchUserDto): Promise<PureUserDto> {
+    return this.usersService.patchOne(req.user, dto);
   }
 }
