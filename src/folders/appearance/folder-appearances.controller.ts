@@ -18,7 +18,7 @@ import { UserRequest } from 'common/types/UserRequest';
 @ApiTags('folders/appearance')
 @Controller('folders/appearance')
 export class FolderAppearancesController {
-  constructor(private folderAppearancesService: FolderAppearancesService) {}
+  constructor(private readonly folderAppearancesService: FolderAppearancesService) {}
 
   @Patch(':id')
   @ApiSecurity('csrf')

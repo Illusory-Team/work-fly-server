@@ -3,7 +3,7 @@ import { TokensService } from 'tokens/tokens.service';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
-  constructor(private tokensService: TokensService) {}
+  constructor(private readonly tokensService: TokensService) {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();

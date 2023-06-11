@@ -17,7 +17,7 @@ import { UserRequest } from 'common/types/UserRequest';
 @ApiTags('companies')
 @Controller('companies')
 export class CompaniesController {
-  constructor(private companiesService: CompaniesService) {}
+  constructor(private readonly companiesService: CompaniesService) {}
 
   @Get(':id')
   @ApiSecurity('csrf')
@@ -25,18 +25,18 @@ export class CompaniesController {
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  findById(@Param('id') id: string): Promise<CompanyDataDto> {
-    return this.companiesService.findById(id);
+  getById(@Param('id') id: string): Promise<CompanyDataDto> {
+    return this.companiesService.getById(id);
   }
 
-  @Patch(':id')
+  @Patch()
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiBadRequestResponse({ schema: { anyOf: [{ description: VALIDATION }, { description: NOTHING_PASSED }] } })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  patchOne(@Req() req: UserRequest, @Param('id') id: string, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
-    return this.companiesService.patchOne(req.user, id, dto);
+  patchOne(@Req() req: UserRequest, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
+    return this.companiesService.patchOne(req.user, dto);
   }
 }

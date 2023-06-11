@@ -17,7 +17,7 @@ import { UserRequest } from 'common/types/UserRequest';
 @ApiTags('folders')
 @Controller('folders')
 export class FoldersController {
-  constructor(private foldersService: FoldersService) {}
+  constructor(private readonly foldersService: FoldersService) {}
 
   @Post()
   @ApiSecurity('csrf')
@@ -33,8 +33,8 @@ export class FoldersController {
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderDataDto, isArray: true })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
-  findByUserId(@Req() req: UserRequest): Promise<FolderDataDto[]> {
-    return this.foldersService.findByUserId(req.user);
+  getByUserId(@Req() req: UserRequest): Promise<FolderDataDto[]> {
+    return this.foldersService.getByUserId(req.user);
   }
 
   @Patch(':id')

@@ -24,7 +24,7 @@ import { RefreshTokenGuard } from '@guards';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService, private tokensService: TokensService) {}
+  constructor(private readonly authService: AuthService, private readonly tokensService: TokensService) {}
 
   @Public()
   @Post('session')
@@ -79,7 +79,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
-    const csrfToken = this.tokensService.getCsrfTokenFromRequest(req);
+    const csrfToken = await this.tokensService.getCSRFTokenFromRequest(req);
 
     this.clearCookies(res);
 

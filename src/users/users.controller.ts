@@ -35,7 +35,7 @@ import { UserRequest } from 'common/types/UserRequest';
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post('avatar')
   @ApiSecurity('csrf')
@@ -87,8 +87,8 @@ export class UsersController {
   @ApiOkResponse({ type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  findById(@Req() req: UserRequest): Promise<FindUserDto> {
-    return this.usersService.findWithPosition(req.user.id);
+  getById(@Req() req: UserRequest): Promise<FindUserDto> {
+    return this.usersService.getWithPosition(req.user.id);
   }
 
   @Patch('me')
