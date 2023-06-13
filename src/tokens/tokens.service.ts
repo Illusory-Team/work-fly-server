@@ -1,26 +1,21 @@
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import {
-  GetCSRFTokenFromRequestCommand,
-  ValidateCSRFTokenCommand,
-  GenerateTokensCommand,
-  NullTokensCommand,
-  ValidateRefreshTokenCommand,
-  ValidateAccessTokenCommand,
-} from './commands';
+import { GenerateTokensCommand, NullTokensCommand } from './commands';
 import { GenerateTokensReturn } from './tokens.interface';
+import { GetCSRFTokenFromRequestQuery, ValidateAccessTokenQuery, ValidateCSRFTokenQuery } from './queries';
+import { ValidateRefreshTokenQuery } from './queries/validate-refresh-token';
 
 @Injectable()
 export class TokensService {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   async getCSRFTokenFromRequest(req: Request): Promise<string> {
-    return this.commandBus.execute(new GetCSRFTokenFromRequestCommand(req));
+    return this.queryBus.execute(new GetCSRFTokenFromRequestQuery(req));
   }
 
   async validateCSRFToken(csrfToken: string) {
-    return this.commandBus.execute(new ValidateCSRFTokenCommand(csrfToken));
+    return this.queryBus.execute(new ValidateCSRFTokenQuery(csrfToken));
   }
 
   async nullTokens(refreshToken: string, csrfToken: string): Promise<void> {
@@ -32,10 +27,10 @@ export class TokensService {
   }
 
   async validateRefreshToken(refreshToken: string) {
-    return this.commandBus.execute(new ValidateRefreshTokenCommand(refreshToken));
+    return this.queryBus.execute(new ValidateRefreshTokenQuery(refreshToken));
   }
 
   async validateAccessToken(accessToken: string) {
-    return this.commandBus.execute(new ValidateAccessTokenCommand(accessToken));
+    return this.queryBus.execute(new ValidateAccessTokenQuery(accessToken));
   }
 }

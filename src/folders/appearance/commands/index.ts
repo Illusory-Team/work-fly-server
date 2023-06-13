@@ -1,7 +1,10 @@
 export { CreateFolderAppearanceCommand } from './create-folder-appearance';
 export { PatchFolderAppearanceCommand } from './patch-folder-appearance';
 
-import { CreateFolderAppearanceHandler } from './create-folder-appearance';
-import { PatchFolderAppearanceHandler } from './patch-folder-appearance';
+import { CreateFolderAppearanceCommandHandler } from './create-folder-appearance';
+import { PatchFolderAppearanceCommandHandler } from './patch-folder-appearance';
 
-export const FolderAppearanceHandlers = [CreateFolderAppearanceHandler, PatchFolderAppearanceHandler];
+export const FolderAppearanceCommandHandlers = [
+  CreateFolderAppearanceCommandHandler,
+  PatchFolderAppearanceCommandHandler,
+];

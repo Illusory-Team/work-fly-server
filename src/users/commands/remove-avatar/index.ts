@@ -1,2 +1,2 @@
 export { RemoveAvatarCommand } from './remove-avatar.command';
-export { RemoveAvatarHandler } from './remove-avatar.handler';
+export { RemoveAvatarCommandHandler } from './remove-avatar.command-handler';

@@ -6,10 +6,10 @@ import { AuthController } from './auth.controller';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CqrsModule } from '@nestjs/cqrs';
-import { AuthHandlers } from './commands';
+import { AuthCommandHandlers } from './commands';
 
 @Module({
-  providers: [AuthService, ...AuthHandlers],
+  providers: [AuthService, ...AuthCommandHandlers],
   controllers: [AuthController],
   imports: [CqrsModule, UsersModule, TokensModule, CompaniesModule, PositionsModule],
 })

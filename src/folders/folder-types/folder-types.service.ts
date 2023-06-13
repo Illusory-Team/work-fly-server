@@ -1,13 +1,13 @@
-import { CommandBus } from '@nestjs/cqrs';
+import { QueryBus } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { FolderType } from '@prisma/client';
-import { GetFolderTypeByValueCommand } from './commands';
+import { GetFolderTypeByValueQuery } from './queries';
 
 @Injectable()
 export class FolderTypesService {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
   async getByValue(type: string): Promise<FolderType> {
-    return this.commandBus.execute(new GetFolderTypeByValueCommand(type));
+    return this.queryBus.execute(new GetFolderTypeByValueQuery(type));
   }
 }

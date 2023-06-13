@@ -1,11 +1,12 @@
-import { PrismaModule } from 'prisma/prisma.module';
 import { Module } from '@nestjs/common';
-import { PositionsService } from './positions.service';
-import { PositionHandlers } from './commands';
 import { CqrsModule } from '@nestjs/cqrs';
+import { PrismaModule } from 'prisma/prisma.module';
+import { PositionsService } from './positions.service';
+import { PositionCommandHandlers } from './commands';
+import { PositionQueryHandlers } from './queries';
 
 @Module({
-  providers: [PositionsService, ...PositionHandlers],
+  providers: [PositionsService, ...PositionCommandHandlers, ...PositionQueryHandlers],
   imports: [PrismaModule, CqrsModule],
   exports: [PositionsService],
 })

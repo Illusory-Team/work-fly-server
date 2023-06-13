@@ -1,2 +1,2 @@
 export { PatchCompanyCommand } from './patch-company.command';
-export { PatchCompanyHandler } from './patch-company.handler';
+export { PatchCompanyCommandHandler } from './patch-company.command-handler';

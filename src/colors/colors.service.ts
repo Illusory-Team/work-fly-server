@@ -1,13 +1,13 @@
-import { CommandBus } from '@nestjs/cqrs';
+import { QueryBus } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { GetByValue } from './colors.interface';
-import { GetColorByValueCommand } from './commands';
+import { GetColorByValueQuery } from './queries';
 
 @Injectable()
 export class ColorsService {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
   getByValue(color: string): Promise<GetByValue> {
-    return this.commandBus.execute(new GetColorByValueCommand(color));
+    return this.queryBus.execute(new GetColorByValueQuery(color));
   }
 }

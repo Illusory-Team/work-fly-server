@@ -6,12 +6,17 @@ import { FolderAppearancesService } from './folder-appearances.service';
 import { PrismaModule } from 'prisma/prisma.module';
 import { FoldersModule } from '../folders.module';
 import { FolderAppearancesController } from './folder-appearances.controller';
-import { FolderAppearanceHandlers } from './commands';
-import { FolderIconHandlers } from './folder-icons/commands';
+import { FolderAppearanceCommandHandlers } from './commands';
+import { FolderIconQueryHandlers } from './folder-icons/queries';
 
 @Module({
   controllers: [FolderAppearancesController],
-  providers: [FolderAppearancesService, FolderIconsService, ...FolderAppearanceHandlers, ...FolderIconHandlers],
+  providers: [
+    FolderAppearancesService,
+    FolderIconsService,
+    ...FolderAppearanceCommandHandlers,
+    ...FolderIconQueryHandlers,
+  ],
   imports: [PrismaModule, CqrsModule, ColorsModule, FoldersModule],
   exports: [FolderAppearancesService],
 })

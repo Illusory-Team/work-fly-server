@@ -3,10 +3,11 @@ import { Module } from '@nestjs/common';
 import { TokensService } from './tokens.service';
 import { JwtModule } from '@nestjs/jwt';
 import { CqrsModule } from '@nestjs/cqrs';
-import { TokenHandlers } from './commands';
+import { TokenCommandHandlers } from './commands';
+import { TokenQueryHandlers } from './queries';
 
 @Module({
-  providers: [TokensService, ...TokenHandlers],
+  providers: [TokensService, ...TokenCommandHandlers, ...TokenQueryHandlers],
   exports: [TokensService],
   imports: [PrismaModule, CqrsModule, JwtModule.register({})],
 })

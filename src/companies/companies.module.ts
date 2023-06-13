@@ -3,10 +3,11 @@ import { PrismaModule } from 'prisma/prisma.module';
 import { Module } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CompaniesController } from './companies.controller';
-import { CompaniesHandlers } from './commands';
+import { CompanyCommandHandlers } from './commands';
+import { CompanyQueryHandlers } from './queries';
 
 @Module({
-  providers: [CompaniesService, ...CompaniesHandlers],
+  providers: [CompaniesService, ...CompanyCommandHandlers, ...CompanyQueryHandlers],
   controllers: [CompaniesController],
   exports: [CompaniesService],
   imports: [CqrsModule, PrismaModule],

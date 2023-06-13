@@ -1,13 +1,13 @@
-import { CommandBus } from '@nestjs/cqrs';
+import { QueryBus } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { FolderIcon } from '@prisma/client';
-import { GetFolderIconByValueCommand } from './commands';
+import { GetFolderIconByValueQuery } from './queries';
 
 @Injectable()
 export class FolderIconsService {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
   getByValue(icon: string): Promise<FolderIcon> {
-    return this.commandBus.execute(new GetFolderIconByValueCommand(icon));
+    return this.queryBus.execute(new GetFolderIconByValueQuery(icon));
   }
 }

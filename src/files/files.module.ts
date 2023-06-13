@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { FileHandlers } from './commands';
+import { FileCommandHandlers } from './commands';
 import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
-  providers: [FilesService, ...FileHandlers],
+  providers: [FilesService, ...FileCommandHandlers],
   exports: [FilesService],
   imports: [CqrsModule],
 })

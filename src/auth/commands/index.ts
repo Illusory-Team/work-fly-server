@@ -4,10 +4,16 @@ export { LoginCommand } from './login';
 export { LogoutCommand } from './logout';
 export { RefreshCommand } from './refresh';
 
-import { SetSessionHandler } from './set-session';
-import { RegisterHandler } from './register';
-import { LoginHandler } from './login';
-import { LogoutHandler } from './logout';
-import { RefreshHandler } from './refresh';
+import { SetSessionCommandHandler } from './set-session';
+import { RegisterCommandHandler } from './register';
+import { LoginCommandHandler } from './login';
+import { LogoutCommandHandler } from './logout';
+import { RefreshCommandHandler } from './refresh';
 
-export const AuthHandlers = [SetSessionHandler, RegisterHandler, LoginHandler, LogoutHandler, RefreshHandler];
+export const AuthCommandHandlers = [
+  SetSessionCommandHandler,
+  RegisterCommandHandler,
+  LoginCommandHandler,
+  LogoutCommandHandler,
+  RefreshCommandHandler,
+];

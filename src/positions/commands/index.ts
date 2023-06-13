@@ -1,7 +1,5 @@
 export { CreatePositionCommand } from './create-position';
-export { GetPositionCommand } from './get-position';
 
-import { CreatePositionHandler } from './create-position';
-import { GetPositionHandler } from './get-position';
+import { CreatePositionCommandHandler } from './create-position';
 
-export const PositionHandlers = [CreatePositionHandler, GetPositionHandler];
+export const PositionCommandHandlers = [CreatePositionCommandHandler];

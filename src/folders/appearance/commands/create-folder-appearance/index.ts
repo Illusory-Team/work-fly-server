@@ -1,2 +1,2 @@
 export { CreateFolderAppearanceCommand } from './create-folder-appearance.command';
-export { CreateFolderAppearanceHandler } from './create-folder-appearance.handler';
+export { CreateFolderAppearanceCommandHandler } from './create-folder-appearance.command-handler';

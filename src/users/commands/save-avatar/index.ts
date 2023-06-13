@@ -1,2 +1,2 @@
 export { SaveAvatarCommand } from './save-avatar.command';
-export { SaveAvatarHandler } from './save-avatar.handler';
+export { SaveAvatarCommandHandler } from './save-avatar.command-handler';

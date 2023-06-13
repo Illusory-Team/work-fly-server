@@ -1,2 +1,2 @@
 export { SetSessionCommand } from './set-session.command';
-export { SetSessionHandler } from './set-session.handler';
+export { SetSessionCommandHandler } from './set-session.command-handler';
