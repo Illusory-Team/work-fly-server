@@ -17,6 +17,6 @@ export class GetCompanyQueryHandler implements IQueryHandler<GetCompanyQuery> {
       throw new NotFoundException(NOT_FOUND);
     }
 
-    return this.prismaService.company.findUnique({ where: { id } });
+    return company;
   }
 }

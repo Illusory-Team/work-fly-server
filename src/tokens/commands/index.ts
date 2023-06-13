@@ -1,7 +1,7 @@
-export { NullTokensCommand } from './null-tokens';
+export { ClearTokensCommand } from './clear-tokens';
 export { GenerateTokensCommand } from './generate-tokens';
 
-import { NullTokensCommandHandler } from './null-tokens';
+import { ClearTokensCommandHandler } from './clear-tokens';
 import { GenerateTokensCommandHandler } from './generate-tokens';
 
-export const TokenCommandHandlers = [NullTokensCommandHandler, GenerateTokensCommandHandler];
+export const TokenCommandHandlers = [ClearTokensCommandHandler, GenerateTokensCommandHandler];

@@ -1,13 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PrismaService } from 'prisma/prisma.service';
-import { NullTokensCommand } from './null-tokens.command';
+import { ClearTokensCommand } from './clear-tokens.command';
 import { UnauthorizedException } from '@nestjs/common';
 
-@CommandHandler(NullTokensCommand)
-export class NullTokensCommandHandler implements ICommandHandler<NullTokensCommand> {
+@CommandHandler(ClearTokensCommand)
+export class ClearTokensCommandHandler implements ICommandHandler<ClearTokensCommand> {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(command: NullTokensCommand): Promise<void> {
+  async execute(command: ClearTokensCommand): Promise<void> {
     const { refreshToken, csrfToken } = command;
 
     const currentRefreshEntity = await this.prismaService.token.findUnique({

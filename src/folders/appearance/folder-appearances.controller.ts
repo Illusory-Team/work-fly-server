@@ -1,5 +1,5 @@
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
-import { FolderAppearanceDataDto } from './dto/folder-appearance-data.dto';
+import { MappedFolderAppearanceDataDto } from './dto';
 import { FolderAppearancesService } from './folder-appearances.service';
 import { Body, Controller, Param, Patch, Req } from '@nestjs/common';
 import { PatchFolderAppearanceDto } from './dto';
@@ -14,6 +14,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UserRequest } from 'common/types/UserRequest';
+import { OptionalValidationPipe } from 'common/pipes';
 
 @ApiTags('folders/appearance')
 @Controller('folders/appearance')
@@ -23,7 +24,7 @@ export class FolderAppearancesController {
   @Patch(':id')
   @ApiSecurity('csrf')
   @ApiBearerAuth('access')
-  @ApiOkResponse({ type: FolderAppearanceDataDto })
+  @ApiOkResponse({ type: MappedFolderAppearanceDataDto })
   @ApiBadRequestResponse({ description: NOTHING_PASSED })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiForbiddenResponse({ description: 'You are not the owner of this folder.' })
@@ -33,8 +34,8 @@ export class FolderAppearancesController {
   patchOneFolderAppearance(
     @Req() req: UserRequest,
     @Param('id') id: string,
-    @Body() dto: PatchFolderAppearanceDto,
-  ): Promise<FolderAppearanceDataDto> {
+    @Body(OptionalValidationPipe) dto: PatchFolderAppearanceDto,
+  ): Promise<MappedFolderAppearanceDataDto> {
     return this.folderAppearancesService.patchOne(req.user, id, dto);
   }
 }

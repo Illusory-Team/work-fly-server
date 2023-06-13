@@ -2,10 +2,10 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
 import { RefreshCommand } from './refresh.command';
 import { UserReturnDto } from 'auth/dto';
-import { PureRelationsUserDto, PureUserDto } from 'users/dto';
 import { UsersService } from 'users/users.service';
 import { TokensService } from 'tokens/tokens.service';
 import { PositionsService } from 'positions/positions.service';
+import { AuthMapper } from 'auth/auth.mapper';
 
 @CommandHandler(RefreshCommand)
 export class RefreshCommandHandler {
@@ -32,8 +32,6 @@ export class RefreshCommandHandler {
 
     const tokens = await this.tokensService.generateTokens(user.id);
 
-    const responseUser: PureRelationsUserDto = { ...new PureUserDto(user), position };
-    const responseData = { user: responseUser, csrfToken: tokens.csrfToken };
-    return { data: responseData, tokens: { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken } };
+    return AuthMapper.makeAuthResponse(user, position, tokens);
   }
 }

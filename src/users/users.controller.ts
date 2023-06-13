@@ -31,6 +31,7 @@ import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED, USER_EXISTS } from '@constants
 import { IMAGE_VALIDATION, VALIDATION } from '@constants/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserRequest } from 'common/types/UserRequest';
+import { OptionalValidationPipe } from 'common/pipes';
 
 @ApiTags('users')
 @Controller('users')
@@ -101,7 +102,7 @@ export class UsersController {
     schema: { anyOf: [{ description: USER_EXISTS }, { description: 'You are not the owner of this account.' }] },
   })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  patchOne(@Req() req: UserRequest, @Body() dto: PatchUserDto): Promise<PureUserDto> {
+  patchOne(@Req() req: UserRequest, @Body(OptionalValidationPipe) dto: PatchUserDto): Promise<PureUserDto> {
     return this.usersService.patchOne(req.user, dto);
   }
 }

@@ -1,6 +1,6 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { ForbiddenException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { NOTHING_PASSED, USER_EXISTS } from '@constants/error';
+import { USER_EXISTS } from '@constants/error';
 import { PrismaService } from 'prisma/prisma.service';
 import { PureUserDto } from 'users/dto';
 import { PatchUserCommand } from './patch-user.command';
@@ -12,12 +12,11 @@ export class PatchUserCommandHandler implements ICommandHandler<PatchUserCommand
   async execute(command: PatchUserCommand): Promise<PureUserDto> {
     const { user, dto } = command;
 
-    if (Object.keys(dto).length < 1) {
-      throw new BadRequestException(NOTHING_PASSED);
-    }
     if (dto.email) {
       const candidate = await this.prismaService.user.findUnique({ where: { email: dto.email } });
-      if (candidate) throw new ForbiddenException(USER_EXISTS);
+      if (candidate) {
+        throw new ForbiddenException(USER_EXISTS);
+      }
     }
     if (dto.birthday) {
       dto.birthday = new Date(dto.birthday);

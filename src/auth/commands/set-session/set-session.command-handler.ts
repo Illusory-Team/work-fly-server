@@ -5,10 +5,11 @@ import { USER_EXISTS } from '@constants/error';
 import { UsersService } from 'users/users.service';
 import { SetSessionReturnDto } from 'auth/dto';
 import { SetSessionCommand } from './set-session.command';
+import { ConfigService } from '@nestjs/config';
 
 @CommandHandler(SetSessionCommand)
 export class SetSessionCommandHandler implements ICommandHandler<SetSessionCommand> {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly configService: ConfigService, private readonly usersService: UsersService) {}
 
   async execute(command: SetSessionCommand): Promise<SetSessionReturnDto> {
     const { dto } = command;
@@ -18,7 +19,7 @@ export class SetSessionCommandHandler implements ICommandHandler<SetSessionComma
       throw new ForbiddenException(USER_EXISTS);
     }
 
-    const hashPassword = await hash(dto.password, 7);
+    const hashPassword = await hash(dto.password, +this.configService.get<string>('AUTH_SALT_ROUNDS'));
     return { ...dto, password: hashPassword };
   }
 }

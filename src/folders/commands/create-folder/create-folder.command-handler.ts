@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateFolderCommand } from './create-folder.command';
 import { PrismaService } from 'prisma/prisma.service';
 import { FolderTypesService } from 'folders/folder-types/folder-types.service';
-import { FolderDataDto, UglyFolderDataDto } from 'folders/dto';
+import { FolderDataDto, MappedFolderDataDto } from 'folders/dto';
 import { FolderAppearancesService } from 'folders/appearance/folder-appearances.service';
 import { FoldersSelector } from 'folders/folders.selector';
 import { FoldersMapper } from 'folders/folders.mapper';
@@ -17,7 +17,7 @@ export class CreateFolderCommandHandler implements ICommandHandler<CreateFolderC
     private readonly folderTypesService: FolderTypesService,
   ) {}
 
-  async execute(command: CreateFolderCommand): Promise<FolderDataDto> {
+  async execute(command: CreateFolderCommand): Promise<MappedFolderDataDto> {
     const { user, dto } = command;
 
     const folderType = await this.folderTypesService.getByValue(dto.folderType);
@@ -34,7 +34,7 @@ export class CreateFolderCommandHandler implements ICommandHandler<CreateFolderC
     //it needs to create appearance entity after folder entity (requires its id)
     await this.folderAppearancesService.create(folderData.id, dto.folderAppearance);
 
-    const updatedFolder: UglyFolderDataDto = await this.prismaService.folder.findUnique({
+    const updatedFolder: FolderDataDto = await this.prismaService.folder.findUnique({
       where: { id: folderData.id },
       select: FoldersSelector.selectFolder(),
     });

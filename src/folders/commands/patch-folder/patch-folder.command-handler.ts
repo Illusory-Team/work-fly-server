@@ -1,8 +1,7 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { ForbiddenException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PatchFolderCommand } from './patch-folder.command';
-import { FolderDataDto, UglyFolderDataDto } from 'folders/dto';
-import { NOTHING_PASSED } from '@constants/error';
+import { FolderDataDto, MappedFolderDataDto } from 'folders/dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { FoldersSelector } from 'folders/folders.selector';
 import { FoldersMapper } from 'folders/folders.mapper';
@@ -11,12 +10,8 @@ import { FoldersMapper } from 'folders/folders.mapper';
 export class PatchFolderCommandHandler implements ICommandHandler<PatchFolderCommand> {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(command: PatchFolderCommand): Promise<FolderDataDto> {
+  async execute(command: PatchFolderCommand): Promise<MappedFolderDataDto> {
     const { user, id, dto } = command;
-
-    if (Object.keys(dto).length < 1) {
-      throw new BadRequestException(NOTHING_PASSED);
-    }
 
     const folder = await this.prismaService.folder.findUnique({ where: { id }, select: { ownerId: true } });
 
@@ -24,7 +19,7 @@ export class PatchFolderCommandHandler implements ICommandHandler<PatchFolderCom
       throw new ForbiddenException();
     }
 
-    const updatedFolder: UglyFolderDataDto = await this.prismaService.folder.update({
+    const updatedFolder: FolderDataDto = await this.prismaService.folder.update({
       where: { id },
       data: { ...dto },
       select: FoldersSelector.selectFolder(),

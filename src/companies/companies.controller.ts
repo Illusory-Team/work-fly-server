@@ -13,6 +13,7 @@ import {
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { VALIDATION } from '@constants/swagger';
 import { UserRequest } from 'common/types/UserRequest';
+import { OptionalValidationPipe } from 'common/pipes';
 
 @ApiTags('companies')
 @Controller('companies')
@@ -36,7 +37,7 @@ export class CompaniesController {
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiBadRequestResponse({ schema: { anyOf: [{ description: VALIDATION }, { description: NOTHING_PASSED }] } })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  patchOne(@Req() req: UserRequest, @Body() dto: PatchCompanyDto): Promise<CompanyDataDto> {
+  patchOne(@Req() req: UserRequest, @Body(OptionalValidationPipe) dto: PatchCompanyDto): Promise<CompanyDataDto> {
     return this.companiesService.patchOne(req.user, dto);
   }
 }

@@ -7,7 +7,7 @@ import { PositionsService } from 'positions/positions.service';
 import { UsersService } from 'users/users.service';
 import { UserReturnDto } from 'auth/dto';
 import { RegisterCommand } from './register.command';
-import { PureRelationsUserDto, PureUserDto } from 'users/dto';
+import { AuthMapper } from 'auth/auth.mapper';
 
 @CommandHandler(RegisterCommand)
 export class RegisterCommandHandler {
@@ -36,8 +36,6 @@ export class RegisterCommandHandler {
 
     const tokens = await this.tokensService.generateTokens(user.id);
 
-    const responseUser: PureRelationsUserDto = { ...new PureUserDto(user), position };
-    const responseData = { user: responseUser, csrfToken: tokens.csrfToken };
-    return { data: responseData, tokens: { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken } };
+    return AuthMapper.makeAuthResponse(user, position, tokens);
   }
 }

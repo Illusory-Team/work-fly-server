@@ -1,8 +1,8 @@
 import { FolderAppearancesMapper } from './appearance/folder-appearances.mapper';
-import { UglyFolderDataDto } from './dto';
+import { FolderDataDto, MappedFolderDataDto } from './dto';
 
 export class FoldersMapper {
-  static mapFolderResponse(folder: UglyFolderDataDto) {
+  static mapFolderResponse(folder: FolderDataDto): MappedFolderDataDto {
     return {
       ...folder,
       users: folder.users.map((userWrappedObj) => userWrappedObj.users), // users[0] = users[0].users

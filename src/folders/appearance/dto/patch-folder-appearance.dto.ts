@@ -1,5 +1,6 @@
-import { FolderAppearanceDataDto } from './folder-appearance-data.dto';
+import { MappedFolderAppearanceDataDto } from './mapped-folder-appearance-data.dto';
 import { PartialType, PickType } from '@nestjs/swagger';
+
 export class PatchFolderAppearanceDto extends PartialType(
-  PickType(FolderAppearanceDataDto, ['icon', 'color'] as const),
+  PickType(MappedFolderAppearanceDataDto, ['icon', 'color'] as const),
 ) {}

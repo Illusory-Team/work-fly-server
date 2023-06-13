@@ -1,9 +1,9 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PatchCompanyCommand } from './patch-company.command';
 import { CompanyDataDto } from 'companies/dto';
 import { PrismaService } from 'prisma/prisma.service';
-import { NOTHING_PASSED, NOT_FOUND } from '@constants/error';
+import { NOT_FOUND } from '@constants/error';
 
 @CommandHandler(PatchCompanyCommand)
 export class PatchCompanyCommandHandler implements ICommandHandler<PatchCompanyCommand> {
@@ -11,10 +11,6 @@ export class PatchCompanyCommandHandler implements ICommandHandler<PatchCompanyC
 
   async execute(command: PatchCompanyCommand): Promise<CompanyDataDto> {
     const { user, dto } = command;
-
-    if (Object.keys(dto).length < 1) {
-      throw new BadRequestException(NOTHING_PASSED);
-    }
 
     const company = await this.prismaService.company.findUnique({ where: { id: user.companyId } });
 

@@ -1,7 +1,7 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { GenerateTokensCommand, NullTokensCommand } from './commands';
+import { GenerateTokensCommand, ClearTokensCommand } from './commands';
 import { GenerateTokensReturn } from './tokens.interface';
 import { GetCSRFTokenFromRequestQuery, ValidateAccessTokenQuery, ValidateCSRFTokenQuery } from './queries';
 import { ValidateRefreshTokenQuery } from './queries/validate-refresh-token';
@@ -19,7 +19,7 @@ export class TokensService {
   }
 
   async nullTokens(refreshToken: string, csrfToken: string): Promise<void> {
-    return this.commandBus.execute(new NullTokensCommand(refreshToken, csrfToken));
+    return this.commandBus.execute(new ClearTokensCommand(refreshToken, csrfToken));
   }
 
   async generateTokens(userId: string): Promise<GenerateTokensReturn> {

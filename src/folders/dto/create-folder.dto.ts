@@ -1,4 +1,4 @@
 import { PickType } from '@nestjs/swagger';
-import { FolderDataDto } from './folder-data.dto';
+import { MappedFolderDataDto } from './mapped-folder-data.dto';
 
-export class CreateFolderDto extends PickType(FolderDataDto, ['name', 'folderType', 'folderAppearance']) {}
+export class CreateFolderDto extends PickType(MappedFolderDataDto, ['name', 'folderType', 'folderAppearance']) {}

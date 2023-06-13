@@ -1,7 +1,7 @@
-import { FolderAppearanceDataDto, UglyFolderAppearanceDataDto } from './dto';
+import { MappedFolderAppearanceDataDto, FolderAppearanceDataDto } from './dto';
 
 export class FolderAppearancesMapper {
-  static mapFolderAppearanceResponse(folderAppearance: UglyFolderAppearanceDataDto): FolderAppearanceDataDto {
+  static mapFolderAppearanceResponse(folderAppearance: FolderAppearanceDataDto): MappedFolderAppearanceDataDto {
     return {
       // folder.folderAppearance = {icon, color}
       icon: folderAppearance.icon.icon,

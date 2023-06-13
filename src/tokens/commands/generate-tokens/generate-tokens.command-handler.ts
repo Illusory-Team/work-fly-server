@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { GenerateTokensReturn } from 'tokens/tokens.interface';
 import { PrismaService } from 'prisma/prisma.service';
+import { ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME } from 'tokens/tokens.constants';
 
 @CommandHandler(GenerateTokensCommand)
 export class GenerateTokensCommandHandler implements ICommandHandler<GenerateTokensCommand> {
@@ -23,17 +24,20 @@ export class GenerateTokensCommandHandler implements ICommandHandler<GenerateTok
         },
         {
           secret: this.configService.get('ACCESS_SECRET_KEY'),
-          expiresIn: '15m',
+          expiresIn: ACCESS_TOKEN_TIME,
         },
       ),
-      this.jwtService.signAsync({ userId }, { secret: this.configService.get('CSRF_SECRET_KEY'), expiresIn: '15m' }),
+      this.jwtService.signAsync(
+        { userId },
+        { secret: this.configService.get('CSRF_SECRET_KEY'), expiresIn: ACCESS_TOKEN_TIME },
+      ),
       this.jwtService.signAsync(
         {
           userId,
         },
         {
           secret: this.configService.get('REFRESH_SECRET_KEY'),
-          expiresIn: '7d',
+          expiresIn: REFRESH_TOKEN_TIME,
         },
       ),
     ]);

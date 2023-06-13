@@ -13,6 +13,7 @@ import {
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, UNAUTHORIZED } from '@constants/error';
 import { UserRequest } from 'common/types/UserRequest';
+import { OptionalValidationPipe } from 'common/pipes';
 
 @ApiTags('folders')
 @Controller('folders')
@@ -44,7 +45,11 @@ export class FoldersController {
   @ApiBadRequestResponse({ description: NOTHING_PASSED })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiForbiddenResponse({ description: 'You are not the owner of this folder.' })
-  patchOne(@Req() req: UserRequest, @Param('id') id: string, @Body() dto: PatchFolderDto): Promise<FolderDataDto> {
+  patchOne(
+    @Req() req: UserRequest,
+    @Param('id') id: string,
+    @Body(OptionalValidationPipe) dto: PatchFolderDto,
+  ): Promise<FolderDataDto> {
     return this.foldersService.patchOne(req.user, id, dto);
   }
 }

@@ -1,6 +1,6 @@
 import { CommandBus } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
-import { CreateFolderAppearanceDto, PatchFolderAppearanceDto, FolderAppearanceDataDto } from './dto';
+import { CreateFolderAppearanceDto, PatchFolderAppearanceDto, MappedFolderAppearanceDataDto } from './dto';
 import { CreateFolderAppearance } from './interfaces';
 import { User } from '@prisma/client';
 import { CreateFolderAppearanceCommand, PatchFolderAppearanceCommand } from './commands';
@@ -13,7 +13,7 @@ export class FolderAppearancesService {
     return this.commandBus.execute(new CreateFolderAppearanceCommand(folderId, dto));
   }
 
-  async patchOne(user: User, folderId: string, dto: PatchFolderAppearanceDto): Promise<FolderAppearanceDataDto> {
+  async patchOne(user: User, folderId: string, dto: PatchFolderAppearanceDto): Promise<MappedFolderAppearanceDataDto> {
     return this.commandBus.execute(new PatchFolderAppearanceCommand(user, folderId, dto));
   }
 }

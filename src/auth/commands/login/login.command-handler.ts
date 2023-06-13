@@ -7,7 +7,7 @@ import { TokensService } from 'tokens/tokens.service';
 import { PositionsService } from 'positions/positions.service';
 import { UserReturnDto } from 'auth/dto';
 import { EMAIL_PASSWORD_INCORRECT, NOT_FOUND } from '@constants/error';
-import { PureRelationsUserDto, PureUserDto } from 'users/dto';
+import { AuthMapper } from 'auth/auth.mapper';
 
 @CommandHandler(LoginCommand)
 export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
@@ -34,8 +34,6 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
 
     const tokens = await this.tokensService.generateTokens(user.id);
 
-    const responseUser: PureRelationsUserDto = { ...new PureUserDto(user), position };
-    const responseData = { user: responseUser, csrfToken: tokens.csrfToken };
-    return { data: responseData, tokens: { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken } };
+    return AuthMapper.makeAuthResponse(user, position, tokens);
   }
 }
