@@ -1,4 +1,3 @@
-import { CompaniesService } from './companies.service';
 import { Body, Controller, Get, Param, Patch, Req } from '@nestjs/common';
 import { CompanyDataDto, PatchCompanyDto } from './dto';
 import {
@@ -14,11 +13,14 @@ import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { VALIDATION } from '@constants/swagger';
 import { UserRequest } from 'common/types/UserRequest';
 import { OptionalValidationPipe } from 'common/pipes';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { GetCompanyQuery } from './queries';
+import { PatchCompanyCommand } from './commands';
 
 @ApiTags('companies')
 @Controller('companies')
 export class CompaniesController {
-  constructor(private readonly companiesService: CompaniesService) {}
+  constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   @Get(':id')
   @ApiSecurity('csrf')
@@ -27,7 +29,7 @@ export class CompaniesController {
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   getById(@Param('id') id: string): Promise<CompanyDataDto> {
-    return this.companiesService.getById(id);
+    return this.queryBus.execute(new GetCompanyQuery(id));
   }
 
   @Patch()
@@ -38,6 +40,6 @@ export class CompaniesController {
   @ApiBadRequestResponse({ schema: { anyOf: [{ description: VALIDATION }, { description: NOTHING_PASSED }] } })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   patchOne(@Req() req: UserRequest, @Body(OptionalValidationPipe) dto: PatchCompanyDto): Promise<CompanyDataDto> {
-    return this.companiesService.patchOne(req.user, dto);
+    return this.commandBus.execute(new PatchCompanyCommand(req.user, dto));
   }
 }

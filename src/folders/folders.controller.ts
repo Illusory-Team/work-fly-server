@@ -1,4 +1,3 @@
-import { FoldersService } from './folders.service';
 import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { CreateFolderDto, FolderDataDto, PatchFolderDto } from './dto';
 import {
@@ -14,11 +13,14 @@ import {
 import { NOTHING_PASSED, UNAUTHORIZED } from '@constants/error';
 import { UserRequest } from 'common/types/UserRequest';
 import { OptionalValidationPipe } from 'common/pipes';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateFolderCommand, PatchFolderCommand } from './commands';
+import { GetFolderByUserIdQuery } from './queries';
 
 @ApiTags('folders')
 @Controller('folders')
 export class FoldersController {
-  constructor(private readonly foldersService: FoldersService) {}
+  constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   @Post()
   @ApiSecurity('csrf')
@@ -26,7 +28,7 @@ export class FoldersController {
   @ApiCreatedResponse({ type: FolderDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   create(@Req() req: UserRequest, @Body() dto: CreateFolderDto): Promise<FolderDataDto> {
-    return this.foldersService.create(req.user, dto);
+    return this.commandBus.execute(new CreateFolderCommand(req.user, dto));
   }
 
   @Get()
@@ -35,7 +37,7 @@ export class FoldersController {
   @ApiOkResponse({ type: FolderDataDto, isArray: true })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   getByUserId(@Req() req: UserRequest): Promise<FolderDataDto[]> {
-    return this.foldersService.getByUserId(req.user);
+    return this.queryBus.execute(new GetFolderByUserIdQuery(req.user));
   }
 
   @Patch(':id')
@@ -50,6 +52,6 @@ export class FoldersController {
     @Param('id') id: string,
     @Body(OptionalValidationPipe) dto: PatchFolderDto,
   ): Promise<FolderDataDto> {
-    return this.foldersService.patchOne(req.user, id, dto);
+    return this.commandBus.execute(new PatchFolderCommand(req.user, id, dto));
   }
 }

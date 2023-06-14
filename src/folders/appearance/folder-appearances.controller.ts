@@ -1,6 +1,5 @@
 import { NOTHING_PASSED, NOT_FOUND, UNAUTHORIZED } from '@constants/error';
 import { MappedFolderAppearanceDataDto } from './dto';
-import { FolderAppearancesService } from './folder-appearances.service';
 import { Body, Controller, Param, Patch, Req } from '@nestjs/common';
 import { PatchFolderAppearanceDto } from './dto';
 import {
@@ -15,11 +14,13 @@ import {
 } from '@nestjs/swagger';
 import { UserRequest } from 'common/types/UserRequest';
 import { OptionalValidationPipe } from 'common/pipes';
+import { CommandBus } from '@nestjs/cqrs';
+import { PatchFolderAppearanceCommand } from './commands';
 
 @ApiTags('folders/appearance')
 @Controller('folders/appearance')
 export class FolderAppearancesController {
-  constructor(private readonly folderAppearancesService: FolderAppearancesService) {}
+  constructor(private readonly commandBus: CommandBus) {}
 
   @Patch(':id')
   @ApiSecurity('csrf')
@@ -36,6 +37,6 @@ export class FolderAppearancesController {
     @Param('id') id: string,
     @Body(OptionalValidationPipe) dto: PatchFolderAppearanceDto,
   ): Promise<MappedFolderAppearanceDataDto> {
-    return this.folderAppearancesService.patchOne(req.user, id, dto);
+    return this.commandBus.execute(new PatchFolderAppearanceCommand(req.user, id, dto));
   }
 }

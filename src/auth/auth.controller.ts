@@ -1,7 +1,6 @@
 import { TokensService } from 'tokens/tokens.service';
 import { CreateUserDto } from 'users/dto';
 import { HttpStatus } from '@nestjs/common/enums';
-import { AuthService } from './auth.service';
 import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from '@decorators';
@@ -20,18 +19,20 @@ import { AuthResponseDto, LoginUserDto, RegisterUserOwnerDto, UserSessionDto } f
 import { CreateCompanyDto } from 'companies/dto';
 import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
 import { RefreshTokenGuard } from '@guards';
+import { CommandBus } from '@nestjs/cqrs';
+import { LoginCommand, LogoutCommand, RefreshCommand, RegisterCommand, SetSessionCommand } from './commands';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly tokensService: TokensService) {}
+  constructor(private readonly commandBus: CommandBus, private readonly tokensService: TokensService) {}
 
   @Public()
   @Post('session')
   @ApiCreatedResponse({ description: 'User data session will have been available for 15 mins.' })
   @ApiForbiddenResponse({ description: USER_EXISTS })
   async setSession(@Session() session: Record<string, any>, @Body() dto: UserSessionDto): Promise<void> {
-    const userSessionData = await this.authService.setSession(dto);
+    const userSessionData = await this.commandBus.execute(new SetSessionCommand(dto));
     session.userAuth = { ...userSessionData };
   }
 
@@ -52,7 +53,7 @@ export class AuthController {
 
     const userOwnerDto: RegisterUserOwnerDto = { company: dto, user: userRegData };
 
-    const userData = await this.authService.register(userOwnerDto);
+    const userData = await this.commandBus.execute(new RegisterCommand(userOwnerDto));
 
     this.setCookies(res, userData.tokens);
 
@@ -65,7 +66,7 @@ export class AuthController {
   @ApiOkResponse({ description: 'The user has been successfully logined.', type: AuthResponseDto })
   @ApiForbiddenResponse({ description: EMAIL_PASSWORD_INCORRECT })
   async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<Response<AuthResponseDto>> {
-    const userData = await this.authService.login(dto);
+    const userData = await this.commandBus.execute(new LoginCommand(dto));
 
     this.setCookies(res, userData.tokens);
 
@@ -83,7 +84,7 @@ export class AuthController {
 
     this.clearCookies(res);
 
-    await this.authService.logout(refreshToken, csrfToken);
+    await this.commandBus.execute(new LogoutCommand(refreshToken, csrfToken));
 
     return res.end();
   }
@@ -97,7 +98,7 @@ export class AuthController {
   async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<AuthResponseDto>> {
     const { refreshToken } = req.cookies;
 
-    const userData = await this.authService.refresh(refreshToken);
+    const userData = await this.commandBus.execute(new RefreshCommand(refreshToken));
 
     this.setCookies(res, userData.tokens);
 

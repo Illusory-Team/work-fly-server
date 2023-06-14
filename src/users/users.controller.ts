@@ -1,4 +1,3 @@
-import { UsersService } from './users.service';
 import {
   Controller,
   Get,
@@ -32,11 +31,14 @@ import { IMAGE_VALIDATION, VALIDATION } from '@constants/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserRequest } from 'common/types/UserRequest';
 import { OptionalValidationPipe } from 'common/pipes';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { PatchUserCommand, RemoveAvatarCommand, SaveAvatarCommand } from './commands';
+import { GetUserWithPositionQuery } from './queries';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   @Post('avatar')
   @ApiSecurity('csrf')
@@ -69,7 +71,7 @@ export class UsersController {
     )
     file: Express.Multer.File,
   ): Promise<PureUserDto> {
-    return this.usersService.saveAvatar(req.user, file);
+    return this.commandBus.execute(new SaveAvatarCommand(req.user, file));
   }
 
   @Patch('avatar')
@@ -79,7 +81,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   removeAvatar(@Req() req: UserRequest): Promise<PureUserDto> {
-    return this.usersService.removeAvatar(req.user);
+    return this.commandBus.execute(new RemoveAvatarCommand(req.user));
   }
 
   @Get('me')
@@ -89,7 +91,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   getById(@Req() req: UserRequest): Promise<FindUserDto> {
-    return this.usersService.getWithPosition(req.user.id);
+    return this.queryBus.execute(new GetUserWithPositionQuery(req.user.id));
   }
 
   @Patch('me')
@@ -103,6 +105,6 @@ export class UsersController {
   })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   patchOne(@Req() req: UserRequest, @Body(OptionalValidationPipe) dto: PatchUserDto): Promise<PureUserDto> {
-    return this.usersService.patchOne(req.user, dto);
+    return this.commandBus.execute(new PatchUserCommand(req.user, dto));
   }
 }
