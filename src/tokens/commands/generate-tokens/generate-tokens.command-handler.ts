@@ -42,42 +42,17 @@ export class GenerateTokensCommandHandler implements ICommandHandler<GenerateTok
       ),
     ]);
 
-    await this.saveCSRFToken(userId, csrfToken);
-    await this.saveRefreshToken(userId, refreshToken);
+    await this.prismaService.cSRFToken.upsert({
+      where: { userId },
+      update: { userId, csrfToken },
+      create: { userId, csrfToken },
+    });
+    await this.prismaService.token.upsert({
+      where: { userId: userId },
+      update: { userId, refreshToken },
+      create: { userId, refreshToken },
+    });
 
     return { accessToken, csrfToken, refreshToken };
-  }
-
-  private async saveCSRFToken(userId: string, csrfToken: string): Promise<void> {
-    const tokenData = await this.prismaService.cSRFToken.findUnique({
-      where: { userId },
-    });
-
-    if (tokenData) {
-      await this.prismaService.cSRFToken.update({
-        where: { userId: tokenData.userId },
-        data: { ...tokenData, csrfToken },
-      });
-    } else {
-      await this.prismaService.cSRFToken.create({
-        data: { userId, csrfToken },
-      });
-    }
-  }
-
-  private async saveRefreshToken(userId: string, refreshToken: string): Promise<void> {
-    const tokenData = await this.prismaService.token.findUnique({
-      where: { userId },
-    });
-    if (tokenData) {
-      await this.prismaService.token.update({
-        where: { userId: tokenData.userId },
-        data: { ...tokenData, refreshToken },
-      });
-    } else {
-      await this.prismaService.token.create({
-        data: { userId, refreshToken },
-      });
-    }
   }
 }
