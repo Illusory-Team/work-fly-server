@@ -1,18 +1,18 @@
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { PositionDataDto } from 'positions/dto';
-import { PrismaService } from 'prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { CreatePositionCommand } from './commands';
+import { GetPositionQuery } from './queries';
 
 @Injectable()
 export class PositionsService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   async create(companyId: string, value: string): Promise<PositionDataDto> {
-    const position = await this.prismaService.position.create({ data: { companyId, value } });
-    return new PositionDataDto(position);
+    return this.commandBus.execute(new CreatePositionCommand(companyId, value));
   }
 
-  async findById(id: string): Promise<PositionDataDto> {
-    const position = await this.prismaService.position.findUnique({ where: { id } });
-    return new PositionDataDto(position);
+  async getById(id: string): Promise<PositionDataDto> {
+    return this.queryBus.execute(new GetPositionQuery(id));
   }
 }

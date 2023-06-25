@@ -1,4 +1,3 @@
-import { FoldersService } from './folders.service';
 import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { CreateFolderDto, FolderDataDto, PatchFolderDto } from './dto';
 import {
@@ -13,11 +12,15 @@ import {
 } from '@nestjs/swagger';
 import { NOTHING_PASSED, UNAUTHORIZED } from '@constants/error';
 import { UserRequest } from 'common/types/UserRequest';
+import { OptionalValidationPipe } from 'common/pipes';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateFolderCommand, PatchFolderCommand } from './commands';
+import { GetFolderByUserIdQuery } from './queries';
 
 @ApiTags('folders')
 @Controller('folders')
 export class FoldersController {
-  constructor(private foldersService: FoldersService) {}
+  constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   @Post()
   @ApiSecurity('csrf')
@@ -25,7 +28,7 @@ export class FoldersController {
   @ApiCreatedResponse({ type: FolderDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   create(@Req() req: UserRequest, @Body() dto: CreateFolderDto): Promise<FolderDataDto> {
-    return this.foldersService.create(req.user, dto);
+    return this.commandBus.execute(new CreateFolderCommand(req.user, dto));
   }
 
   @Get()
@@ -33,8 +36,8 @@ export class FoldersController {
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderDataDto, isArray: true })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
-  findByUserId(@Req() req: UserRequest): Promise<FolderDataDto[]> {
-    return this.foldersService.findByUserId(req.user);
+  getByUserId(@Req() req: UserRequest): Promise<FolderDataDto[]> {
+    return this.queryBus.execute(new GetFolderByUserIdQuery(req.user));
   }
 
   @Patch(':id')
@@ -44,7 +47,11 @@ export class FoldersController {
   @ApiBadRequestResponse({ description: NOTHING_PASSED })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiForbiddenResponse({ description: 'You are not the owner of this folder.' })
-  patchOne(@Req() req: UserRequest, @Param('id') id: string, @Body() dto: PatchFolderDto): Promise<FolderDataDto> {
-    return this.foldersService.patchOne(req.user, id, dto);
+  patchOne(
+    @Req() req: UserRequest,
+    @Param('id') id: string,
+    @Body(OptionalValidationPipe) dto: PatchFolderDto,
+  ): Promise<FolderDataDto> {
+    return this.commandBus.execute(new PatchFolderCommand(req.user, id, dto));
   }
 }

@@ -1,12 +1,13 @@
-import { PrismaService } from 'prisma/prisma.service';
+import { QueryBus } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
-import { FindByValue } from './interfaces';
+import { GetByValue } from './colors.interface';
+import { GetColorByValueQuery } from './queries';
 
 @Injectable()
 export class ColorsService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
-  findByValue(color: string): Promise<FindByValue> {
-    return this.prismaService.color.findUnique({ where: { color } });
+  getByValue(color: string): Promise<GetByValue> {
+    return this.queryBus.execute(new GetColorByValueQuery(color));
   }
 }

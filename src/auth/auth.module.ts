@@ -4,11 +4,12 @@ import { TokensModule } from 'tokens/tokens.module';
 import { UsersModule } from 'users/users.module';
 import { AuthController } from './auth.controller';
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { CqrsModule } from '@nestjs/cqrs';
+import { AuthCommandHandlers } from './commands';
 
 @Module({
-  providers: [AuthService],
+  providers: [...AuthCommandHandlers],
   controllers: [AuthController],
-  imports: [UsersModule, TokensModule, CompaniesModule, PositionsModule],
+  imports: [CqrsModule, UsersModule, TokensModule, CompaniesModule, PositionsModule],
 })
 export class AuthModule {}
