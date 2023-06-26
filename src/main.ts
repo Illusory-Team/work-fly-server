@@ -13,20 +13,12 @@ async function bootstrap() {
     .setTitle('work-fly')
     .setDescription('work-fly api')
     .setVersion('0.0.1')
-    .addSecurity('csrf', {
+    .addSecurity('access', {
       type: 'apiKey',
       in: 'header',
-      name: 'csrf-token',
-      description: 'csrf-token',
+      name: 'access-token',
+      description: 'access-token',
     })
-    .addBearerAuth(
-      {
-        type: 'apiKey',
-        name: 'access',
-        description: 'UNNECESSARY TO TYPE IN, using from cookies',
-      },
-      'access',
-    )
     .addBearerAuth(
       {
         type: 'apiKey',

@@ -1,6 +1,6 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ValidateRefreshTokenQuery } from './validate-refresh-token.query';
-import { UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -14,13 +14,19 @@ export class ValidateRefreshTokenQueryHandler implements IQueryHandler<ValidateR
   ) {}
 
   async execute(query: ValidateRefreshTokenQuery) {
-    const { refreshToken } = query;
+    try {
+      const { refreshToken } = query;
 
-    const tokenFromDb = await this.prismaService.token.findUnique({ where: { refreshToken } });
-    if (!tokenFromDb) {
+      const tokenFromDb = await this.prismaService.token.findUnique({ where: { refreshToken } });
+      if (!tokenFromDb) {
+        throw new UnauthorizedException();
+      }
+
+      return this.jwtService.verify(tokenFromDb.refreshToken, {
+        secret: this.configService.get<string>('REFRESH_SECRET_KEY'),
+      });
+    } catch {
       throw new UnauthorizedException();
     }
-
-    return this.jwtService.verify(refreshToken, { secret: this.configService.get<string>('REFRESH_SECRET_KEY') });
   }
 }

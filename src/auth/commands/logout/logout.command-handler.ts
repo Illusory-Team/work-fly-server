@@ -8,11 +8,11 @@ export class LogoutCommandHandler implements ICommandHandler<LogoutCommand> {
   constructor(private readonly tokensService: TokensService) {}
 
   async execute(command: LogoutCommand) {
-    const { refreshToken, csrfToken } = command;
+    const { refreshToken } = command;
 
-    if (!refreshToken || !csrfToken) {
+    if (!refreshToken) {
       throw new UnauthorizedException();
     }
-    await this.tokensService.nullTokens(refreshToken, csrfToken);
+    await this.tokensService.clearRefreshToken(refreshToken);
   }
 }

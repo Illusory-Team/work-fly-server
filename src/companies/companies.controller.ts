@@ -23,7 +23,7 @@ export class CompaniesController {
   constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   @Get(':id')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -33,7 +33,7 @@ export class CompaniesController {
   }
 
   @Patch()
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: CompanyDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })

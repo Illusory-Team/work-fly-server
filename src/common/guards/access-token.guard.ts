@@ -1,11 +1,12 @@
-import { TokensService } from 'tokens/tokens.service';
+import { Request } from 'express';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UsersService } from 'users/users.service';
 import { IS_PUBLIC_KEY } from '@constants/index';
+import { TokensService } from 'tokens/tokens.service';
+import { UsersService } from 'users/users.service';
 
 @Injectable()
-export class CsrfAndAccessTokenGuard implements CanActivate {
+export class AccessTokenGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly tokensService: TokensService,
@@ -22,21 +23,20 @@ export class CsrfAndAccessTokenGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const token = await this.tokensService.getCSRFTokenFromRequest(request);
-    const csrfTokenData = await this.tokensService.validateCSRFToken(token);
-
-    const { accessToken } = request.cookies;
-    if (!accessToken) {
+    const accessToken = this.extractTokenFromHeader(request);
+    const tokenData = await this.tokensService.validateAccessToken(accessToken);
+    if (!tokenData) {
       throw new UnauthorizedException();
     }
 
-    const { userId } = await this.tokensService.validateAccessToken(accessToken);
-    if (!userId || csrfTokenData.userId !== userId) {
-      throw new UnauthorizedException();
-    }
-    const user = await this.usersService.getById(userId);
+    const user = await this.usersService.getById(tokenData.userId);
     request.user = user;
 
     return true;
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

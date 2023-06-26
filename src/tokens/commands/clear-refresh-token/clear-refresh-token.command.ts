@@ -1,3 +1,3 @@
-export class LogoutCommand {
+export class ClearRefreshTokenCommand {
   constructor(public readonly refreshToken: string) {}
 }

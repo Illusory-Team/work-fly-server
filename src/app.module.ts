@@ -1,4 +1,3 @@
-import { CsrfAndAccessTokenGuard } from '@guards';
 import { FolderAppearancesModule } from 'folders/appearance/folder-appearances.module';
 import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
@@ -15,6 +14,7 @@ import { join } from 'path';
 import { FilesModule } from 'files/files.module';
 import { FoldersModule } from 'folders/folders.module';
 import { ColorsModule } from 'colors/colors.module';
+import { AccessTokenGuard } from '@guards';
 
 @Module({
   imports: [
@@ -33,6 +33,6 @@ import { ColorsModule } from 'colors/colors.module';
     FolderAppearancesModule,
     ColorsModule,
   ],
-  providers: [{ provide: APP_GUARD, useClass: CsrfAndAccessTokenGuard }, IsPhoneNumberConstraint],
+  providers: [{ provide: APP_GUARD, useClass: AccessTokenGuard }, IsPhoneNumberConstraint],
 })
 export class AppModule {}

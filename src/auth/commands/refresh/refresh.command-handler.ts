@@ -1,11 +1,11 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
 import { RefreshCommand } from './refresh.command';
-import { UserReturnDto } from 'auth/dto';
 import { UsersService } from 'users/users.service';
 import { TokensService } from 'tokens/tokens.service';
 import { PositionsService } from 'positions/positions.service';
 import { AuthMapper } from 'auth/auth.mapper';
+import { AuthReturn } from 'auth/auth.interface';
 
 @CommandHandler(RefreshCommand)
 export class RefreshCommandHandler {
@@ -15,12 +15,8 @@ export class RefreshCommandHandler {
     private readonly positionsService: PositionsService,
   ) {}
 
-  async execute(command: RefreshCommand): Promise<UserReturnDto> {
+  async execute(command: RefreshCommand): Promise<AuthReturn> {
     const { refreshToken } = command;
-
-    if (!refreshToken) {
-      throw new UnauthorizedException();
-    }
 
     const userRefreshData = await this.tokensService.validateRefreshToken(refreshToken);
     if (!userRefreshData) {

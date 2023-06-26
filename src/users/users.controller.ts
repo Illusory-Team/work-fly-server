@@ -41,7 +41,7 @@ export class UsersController {
   constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   @Post('avatar')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -75,7 +75,7 @@ export class UsersController {
   }
 
   @Patch('avatar')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiOkResponse({ description: 'Removes avatar file.', type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -85,7 +85,7 @@ export class UsersController {
   }
 
   @Get('me')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -95,7 +95,7 @@ export class UsersController {
   }
 
   @Patch('me')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })

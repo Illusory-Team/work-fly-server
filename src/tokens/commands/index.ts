@@ -1,7 +1,7 @@
-export { ClearTokensCommand } from './clear-tokens';
+export { ClearRefreshTokenCommand } from './clear-refresh-token';
 export { GenerateTokensCommand } from './generate-tokens';
 
-import { ClearTokensCommandHandler } from './clear-tokens';
+import { ClearRefreshTokenCommandHandler } from './clear-refresh-token';
 import { GenerateTokensCommandHandler } from './generate-tokens';
 
-export const TokenCommandHandlers = [ClearTokensCommandHandler, GenerateTokensCommandHandler];
+export const TokenCommandHandlers = [ClearRefreshTokenCommandHandler, GenerateTokensCommandHandler];

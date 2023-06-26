@@ -23,7 +23,7 @@ export class FolderAppearancesController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Patch(':id')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: MappedFolderAppearanceDataDto })
   @ApiBadRequestResponse({ description: NOTHING_PASSED })
