@@ -14,7 +14,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { LoginUserDto, RegisterUserOwnerDto, UserDataDto, UserSessionDto } from './dto';
+import { LoginUserDto, RefreshReturnDto, RegisterUserOwnerDto, UserDataDto, UserSessionDto } from './dto';
 import { CreateCompanyDto } from 'companies/dto';
 import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
 import { RefreshTokenGuard } from '@guards';
@@ -91,16 +91,16 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
   @ApiBearerAuth('refresh')
-  @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: UserDataDto })
+  @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: RefreshReturnDto })
   @ApiUnauthorizedResponse({ description: 'Unauthorized by refresh token.' })
-  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<UserDataDto>> {
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<RefreshReturnDto>> {
     const { refreshToken } = req.cookies;
 
-    const userData = await this.commandBus.execute(new RefreshCommand(refreshToken));
+    const tokens = await this.commandBus.execute(new RefreshCommand(refreshToken));
 
-    this.setCookie(res, userData.refreshToken);
+    this.setCookie(res, tokens.refreshToken);
 
-    return res.json(userData.data);
+    return res.json({ accessToken: tokens.accessToken });
   }
 
   private setCookie(res: Response, refreshToken: string) {

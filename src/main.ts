@@ -13,20 +13,21 @@ async function bootstrap() {
     .setTitle('work-fly')
     .setDescription('work-fly api')
     .setVersion('0.0.1')
-    .addSecurity('access', {
-      type: 'apiKey',
-      in: 'header',
-      name: 'access-token',
-      description: 'access-token',
-    })
     .addBearerAuth(
       {
-        type: 'apiKey',
-        name: 'refresh',
-        description: 'UNNECESSARY TO TYPE IN, using from cookies',
+        type: 'http',
+        name: 'access',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'jwt access-token',
       },
-      'refresh',
+      'access',
     )
+    .addSecurity('refresh', {
+      type: 'apiKey',
+      name: 'refresh',
+      description: 'UNNECESSARY TO TYPE IN, using from cookies',
+    })
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

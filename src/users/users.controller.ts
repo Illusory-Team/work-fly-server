@@ -11,7 +11,7 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
 } from '@nestjs/common';
-import { FindUserDto, PatchUserDto, PureUserDto } from './dto';
+import { FindUserDto, PatchUserDto, PureRelationsUserDto, PureUserDto } from './dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -87,7 +87,7 @@ export class UsersController {
   @Get('me')
   @ApiSecurity('access')
   @ApiBearerAuth('access')
-  @ApiOkResponse({ type: PureUserDto })
+  @ApiOkResponse({ type: PureRelationsUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   getById(@Req() req: UserRequest): Promise<FindUserDto> {
@@ -97,7 +97,7 @@ export class UsersController {
   @Patch('me')
   @ApiSecurity('access')
   @ApiBearerAuth('access')
-  @ApiOkResponse({ type: PureUserDto })
+  @ApiOkResponse({ type: PureRelationsUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiBadRequestResponse({ schema: { anyOf: [{ description: VALIDATION }, { description: NOTHING_PASSED }] } })
   @ApiForbiddenResponse({
