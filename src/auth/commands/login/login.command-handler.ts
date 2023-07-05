@@ -5,9 +5,9 @@ import { LoginCommand } from './login.command';
 import { UsersService } from 'users/users.service';
 import { TokensService } from 'tokens/tokens.service';
 import { PositionsService } from 'positions/positions.service';
-import { UserReturnDto } from 'auth/dto';
 import { EMAIL_PASSWORD_INCORRECT, NOT_FOUND } from '@constants/error';
 import { AuthMapper } from 'auth/auth.mapper';
+import { AuthReturn } from 'auth/auth.interface';
 
 @CommandHandler(LoginCommand)
 export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
@@ -17,7 +17,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
     private readonly positionsService: PositionsService,
   ) {}
 
-  async execute(command: LoginCommand): Promise<UserReturnDto> {
+  async execute(command: LoginCommand): Promise<AuthReturn> {
     const { dto } = command;
 
     const user = await this.usersService.getByEmail(dto.email);

@@ -5,9 +5,9 @@ import { TokensService } from 'tokens/tokens.service';
 import { CompaniesService } from 'companies/companies.service';
 import { PositionsService } from 'positions/positions.service';
 import { UsersService } from 'users/users.service';
-import { UserReturnDto } from 'auth/dto';
 import { RegisterCommand } from './register.command';
 import { AuthMapper } from 'auth/auth.mapper';
+import { AuthReturn } from 'auth/auth.interface';
 
 @CommandHandler(RegisterCommand)
 export class RegisterCommandHandler {
@@ -18,7 +18,7 @@ export class RegisterCommandHandler {
     private readonly positionsService: PositionsService,
   ) {}
 
-  async execute(command: RegisterCommand): Promise<UserReturnDto> {
+  async execute(command: RegisterCommand): Promise<AuthReturn> {
     const { dto } = command;
 
     if (!dto.user) {

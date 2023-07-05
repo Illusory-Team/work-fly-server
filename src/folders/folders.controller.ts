@@ -23,7 +23,7 @@ export class FoldersController {
   constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   @Post()
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiCreatedResponse({ type: FolderDataDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -32,7 +32,7 @@ export class FoldersController {
   }
 
   @Get()
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderDataDto, isArray: true })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -41,7 +41,7 @@ export class FoldersController {
   }
 
   @Patch(':id')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiOkResponse({ type: FolderDataDto })
   @ApiBadRequestResponse({ description: NOTHING_PASSED })

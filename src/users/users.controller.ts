@@ -11,7 +11,7 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
 } from '@nestjs/common';
-import { FindUserDto, PatchUserDto, PureUserDto } from './dto';
+import { FindUserDto, PatchUserDto, PureRelationsUserDto, PureUserDto } from './dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -41,7 +41,7 @@ export class UsersController {
   constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
   @Post('avatar')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -75,7 +75,7 @@ export class UsersController {
   }
 
   @Patch('avatar')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
   @ApiOkResponse({ description: 'Removes avatar file.', type: PureUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
@@ -85,9 +85,9 @@ export class UsersController {
   }
 
   @Get('me')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
-  @ApiOkResponse({ type: PureUserDto })
+  @ApiOkResponse({ type: PureRelationsUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
   getById(@Req() req: UserRequest): Promise<FindUserDto> {
@@ -95,9 +95,9 @@ export class UsersController {
   }
 
   @Patch('me')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('access')
-  @ApiOkResponse({ type: PureUserDto })
+  @ApiOkResponse({ type: PureRelationsUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiBadRequestResponse({ schema: { anyOf: [{ description: VALIDATION }, { description: NOTHING_PASSED }] } })
   @ApiForbiddenResponse({

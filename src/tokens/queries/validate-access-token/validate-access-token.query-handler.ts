@@ -1,3 +1,4 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ValidateAccessTokenQuery } from './validate-access-token.query';
 import { JwtService } from '@nestjs/jwt';
@@ -8,8 +9,12 @@ export class ValidateAccessTokenQueryHandler implements IQueryHandler<ValidateAc
   constructor(private readonly jwtService: JwtService, private readonly configService: ConfigService) {}
 
   async execute(query: ValidateAccessTokenQuery) {
-    const { accessToken } = query;
+    try {
+      const { accessToken } = query;
 
-    return this.jwtService.verify(accessToken, { secret: this.configService.get<string>('ACCESS_SECRET_KEY') });
+      return this.jwtService.verify(accessToken, { secret: this.configService.get<string>('ACCESS_SECRET_KEY') });
+    } catch {
+      throw new UnauthorizedException();
+    }
   }
 }

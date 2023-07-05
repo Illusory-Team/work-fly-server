@@ -1,28 +1,19 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
-import { GenerateTokensCommand, ClearTokensCommand } from './commands';
-import { GenerateTokensReturn } from './tokens.interface';
-import { GetCSRFTokenFromRequestQuery, ValidateAccessTokenQuery, ValidateCSRFTokenQuery } from './queries';
+import { GenerateTokensCommand, ClearRefreshTokenCommand } from './commands';
+import { ValidateAccessTokenQuery } from './queries';
 import { ValidateRefreshTokenQuery } from './queries/validate-refresh-token';
+import { TokensDto } from './dto';
 
 @Injectable()
 export class TokensService {
   constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
-  async getCSRFTokenFromRequest(req: Request): Promise<string> {
-    return this.queryBus.execute(new GetCSRFTokenFromRequestQuery(req));
+  async clearRefreshToken(refreshToken: string): Promise<void> {
+    return this.commandBus.execute(new ClearRefreshTokenCommand(refreshToken));
   }
 
-  async validateCSRFToken(csrfToken: string) {
-    return this.queryBus.execute(new ValidateCSRFTokenQuery(csrfToken));
-  }
-
-  async nullTokens(refreshToken: string, csrfToken: string): Promise<void> {
-    return this.commandBus.execute(new ClearTokensCommand(refreshToken, csrfToken));
-  }
-
-  async generateTokens(userId: string): Promise<GenerateTokensReturn> {
+  async generateTokens(userId: string): Promise<TokensDto> {
     return this.commandBus.execute(new GenerateTokensCommand(userId));
   }
 

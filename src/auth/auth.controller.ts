@@ -4,7 +4,7 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from '@decorators';
-import { REFRESH_TOKEN_TIME, ACCESS_TOKEN_TIME } from 'tokens/tokens.constants';
+import { REFRESH_TOKEN_TIME } from 'tokens/tokens.constants';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -14,8 +14,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { TokensDto } from 'tokens/dto/tokens.dto';
-import { AuthResponseDto, LoginUserDto, RegisterUserOwnerDto, UserSessionDto } from './dto';
+import { LoginUserDto, RefreshReturnDto, RegisterUserOwnerDto, UserDataDto, UserSessionDto } from './dto';
 import { CreateCompanyDto } from 'companies/dto';
 import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from '@constants/error';
 import { RefreshTokenGuard } from '@guards';
@@ -40,7 +39,7 @@ export class AuthController {
   @Post('registration')
   @ApiCreatedResponse({
     description: 'The user and the company have been successfully created.',
-    type: AuthResponseDto,
+    type: UserDataDto,
   })
   @ApiForbiddenResponse({ description: USER_EXISTS })
   @ApiForbiddenResponse({ description: NO_SESSION })
@@ -48,14 +47,14 @@ export class AuthController {
     @Session() session: Record<string, any>,
     @Body() dto: CreateCompanyDto,
     @Res() res: Response,
-  ): Promise<Response<AuthResponseDto>> {
+  ): Promise<Response<UserDataDto>> {
     const userRegData: CreateUserDto = session.userAuth;
 
     const userOwnerDto: RegisterUserOwnerDto = { company: dto, user: userRegData };
 
     const userData = await this.commandBus.execute(new RegisterCommand(userOwnerDto));
 
-    this.setCookies(res, userData.tokens);
+    this.setCookie(res, userData.refreshToken);
 
     return res.json(userData.data);
   }
@@ -63,28 +62,27 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ description: 'The user has been successfully logined.', type: AuthResponseDto })
+  @ApiOkResponse({ description: 'The user has been successfully logged in.', type: UserDataDto })
   @ApiForbiddenResponse({ description: EMAIL_PASSWORD_INCORRECT })
-  async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<Response<AuthResponseDto>> {
+  async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<Response<UserDataDto>> {
     const userData = await this.commandBus.execute(new LoginCommand(dto));
 
-    this.setCookies(res, userData.tokens);
+    this.setCookie(res, userData.refreshToken);
 
     return res.json(userData.data);
   }
 
   @Patch('logout')
-  @ApiSecurity('csrf')
+  @ApiSecurity('access')
   @ApiBearerAuth('refresh')
   @ApiOkResponse({ description: 'The user has been successfully logout.' })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
-    const csrfToken = await this.tokensService.getCSRFTokenFromRequest(req);
 
-    this.clearCookies(res);
+    this.clearCookie(res);
 
-    await this.commandBus.execute(new LogoutCommand(refreshToken, csrfToken));
+    await this.commandBus.execute(new LogoutCommand(refreshToken));
 
     return res.end();
   }
@@ -93,31 +91,26 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
   @ApiBearerAuth('refresh')
-  @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: AuthResponseDto })
+  @ApiOkResponse({ description: 'The tokens has been successfully refreshed.', type: RefreshReturnDto })
   @ApiUnauthorizedResponse({ description: 'Unauthorized by refresh token.' })
-  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<AuthResponseDto>> {
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<RefreshReturnDto>> {
     const { refreshToken } = req.cookies;
 
-    const userData = await this.commandBus.execute(new RefreshCommand(refreshToken));
+    const tokens = await this.commandBus.execute(new RefreshCommand(refreshToken));
 
-    this.setCookies(res, userData.tokens);
+    this.setCookie(res, tokens.refreshToken);
 
-    return res.json(userData.data);
+    return res.json({ accessToken: tokens.accessToken });
   }
 
-  private setCookies(res: Response, tokens: TokensDto) {
-    res.cookie('refreshToken', tokens.refreshToken, {
+  private setCookie(res: Response, refreshToken: string) {
+    res.cookie('refreshToken', refreshToken, {
       maxAge: REFRESH_TOKEN_TIME,
       httpOnly: true,
     });
-    res.cookie('accessToken', tokens.accessToken, {
-      maxAge: ACCESS_TOKEN_TIME,
-      httpOnly: true,
-    });
   }
 
-  private clearCookies(res: Response) {
+  private clearCookie(res: Response) {
     res.clearCookie('refreshToken');
-    res.clearCookie('accessToken');
   }
 }
