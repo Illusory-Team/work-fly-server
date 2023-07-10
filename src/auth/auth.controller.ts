@@ -1,4 +1,3 @@
-import { TokensService } from 'tokens/tokens.service';
 import { CreateUserDto } from 'users/dto';
 import { HttpStatus } from '@nestjs/common/enums';
 import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
@@ -24,7 +23,7 @@ import { LoginCommand, LogoutCommand, RefreshCommand, RegisterCommand, SetSessio
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly commandBus: CommandBus, private readonly tokensService: TokensService) {}
+  constructor(private readonly commandBus: CommandBus) {}
 
   @Public()
   @Post('session')
@@ -80,7 +79,7 @@ export class AuthController {
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
 
-    this.clearCookie(res);
+    res.clearCookie('refreshToken');
 
     await this.commandBus.execute(new LogoutCommand(refreshToken));
 
@@ -108,9 +107,5 @@ export class AuthController {
       maxAge: REFRESH_TOKEN_TIME,
       httpOnly: true,
     });
-  }
-
-  private clearCookie(res: Response) {
-    res.clearCookie('refreshToken');
   }
 }
