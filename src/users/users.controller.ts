@@ -11,7 +11,7 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
 } from '@nestjs/common';
-import { FindUserDto, PatchUserDto, PureRelationsUserDto, PureUserDto } from './dto';
+import { PatchUserDto, PureRelationsUserDto, PureUserDto } from './dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -90,7 +90,7 @@ export class UsersController {
   @ApiOkResponse({ type: PureRelationsUserDto })
   @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: NOT_FOUND })
-  getById(@Req() req: UserRequest): Promise<FindUserDto> {
+  getById(@Req() req: UserRequest): Promise<PureRelationsUserDto> {
     return this.queryBus.execute(new GetUserWithPositionQuery(req.user.id));
   }
 
