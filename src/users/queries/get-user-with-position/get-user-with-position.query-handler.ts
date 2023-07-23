@@ -3,14 +3,14 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { NOT_FOUND } from '@constants/error';
 import { PrismaService } from 'prisma/prisma.service';
 import { PositionsService } from 'positions/positions.service';
-import { FindUserDto, PureUserDto } from 'users/dto';
+import { PureRelationsUserDto, PureUserDto } from 'users/dto';
 import { GetUserWithPositionQuery } from './get-user-with-position.query';
 
 @QueryHandler(GetUserWithPositionQuery)
 export class GetUserWithPositionQueryHandler implements IQueryHandler<GetUserWithPositionQuery> {
   constructor(private readonly prismaService: PrismaService, private readonly positionsService: PositionsService) {}
 
-  async execute(query: GetUserWithPositionQuery): Promise<FindUserDto> {
+  async execute(query: GetUserWithPositionQuery): Promise<PureRelationsUserDto> {
     const { id } = query;
 
     const user = await this.prismaService.user.findUnique({ where: { id } });
@@ -19,6 +19,6 @@ export class GetUserWithPositionQueryHandler implements IQueryHandler<GetUserWit
     }
 
     const position = await this.positionsService.getById(user.positionId);
-    return { user: new PureUserDto(user), position };
+    return { ...new PureUserDto(user), position };
   }
 }
