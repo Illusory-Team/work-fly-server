@@ -7,7 +7,7 @@ import { TokensService } from 'tokens/tokens.service';
 export class LogoutCommandHandler implements ICommandHandler<LogoutCommand> {
   constructor(private readonly tokensService: TokensService) {}
 
-  async execute(command: LogoutCommand) {
+  async execute(command: LogoutCommand): Promise<void> {
     const { refreshToken } = command;
 
     if (!refreshToken) {
