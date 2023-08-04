@@ -79,7 +79,7 @@ export class AuthController {
   async logout(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const { refreshToken } = req.cookies;
 
-    this.clearCookie(res);
+    res.clearCookie('refreshToken');
 
     await this.commandBus.execute(new LogoutCommand(refreshToken));
 
@@ -107,9 +107,5 @@ export class AuthController {
       maxAge: +this.configService.get<string>('REFRESH_TIME_MS'),
       httpOnly: true,
     });
-  }
-
-  private clearCookie(res: Response) {
-    res.clearCookie('refreshToken');
   }
 }
