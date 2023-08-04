@@ -38,7 +38,7 @@ async function bootstrap() {
     origin: process.env.CLIENT_URL,
     methods: 'GET,PATCH,PUT,POST,DELETE',
     credentials: true,
-    allowedHeaders: 'content-type',
+    allowedHeaders: 'Content-Type, Authorization',
   });
   app.use(
     session({
@@ -47,7 +47,7 @@ async function bootstrap() {
       resave: false,
       saveUninitialized: true,
       cookie: {
-        maxAge: 900000,
+        maxAge: +process.env.SESSION_TIME_MS,
         httpOnly: true,
       },
     }),

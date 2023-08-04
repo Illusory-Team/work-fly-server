@@ -3,7 +3,6 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { Controller, Post, Get, Patch, Body, Req, Res, HttpCode, UseGuards, Session } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from '@decorators';
-import { REFRESH_TOKEN_TIME } from 'tokens/tokens.constants';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -19,11 +18,12 @@ import { EMAIL_PASSWORD_INCORRECT, NO_SESSION, UNAUTHORIZED, USER_EXISTS } from 
 import { RefreshTokenGuard } from '@guards';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoginCommand, LogoutCommand, RefreshCommand, RegisterCommand, SetSessionCommand } from './commands';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(private readonly commandBus: CommandBus, private readonly configService: ConfigService) {}
 
   @Public()
   @Post('session')
@@ -49,7 +49,7 @@ export class AuthController {
   ): Promise<Response<UserDataDto>> {
     const userRegData: CreateUserDto = session.userAuth;
 
-    const userOwnerDto: RegisterUserOwnerDto = { company: dto, user: userRegData };
+    const userOwnerDto: RegisterUserOwnerDto = { company: dto, user: { ...userRegData, password: '' } };
 
     const userData = await this.commandBus.execute(new RegisterCommand(userOwnerDto));
 
@@ -104,7 +104,7 @@ export class AuthController {
 
   private setCookie(res: Response, refreshToken: string) {
     res.cookie('refreshToken', refreshToken, {
-      maxAge: REFRESH_TOKEN_TIME,
+      maxAge: +this.configService.get<string>('REFRESH_TIME_MS'),
       httpOnly: true,
     });
   }

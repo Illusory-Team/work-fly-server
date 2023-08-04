@@ -3,7 +3,6 @@ import { GenerateTokensCommand } from './generate-tokens.command';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'prisma/prisma.service';
-import { ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME } from 'tokens/tokens.constants';
 import { TokensDto } from 'tokens/dto';
 
 @CommandHandler(GenerateTokensCommand)
@@ -24,7 +23,7 @@ export class GenerateTokensCommandHandler implements ICommandHandler<GenerateTok
         },
         {
           secret: this.configService.get('ACCESS_SECRET_KEY'),
-          expiresIn: ACCESS_TOKEN_TIME,
+          expiresIn: this.configService.get('ACCESS_TIME'),
         },
       ),
       this.jwtService.signAsync(
@@ -33,7 +32,7 @@ export class GenerateTokensCommandHandler implements ICommandHandler<GenerateTok
         },
         {
           secret: this.configService.get('REFRESH_SECRET_KEY'),
-          expiresIn: REFRESH_TOKEN_TIME,
+          expiresIn: this.configService.get('REFRESH_TIME'),
         },
       ),
     ]);
